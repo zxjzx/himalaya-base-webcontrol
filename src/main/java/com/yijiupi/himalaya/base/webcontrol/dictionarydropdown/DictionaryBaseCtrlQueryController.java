@@ -15,9 +15,9 @@ import com.yijiupi.himalaya.base.webcontrol.dictionarydropdown.vo.DictionaryVO;
 import com.yijiupi.himalaya.base.webcontrol.pagemodel.BaseResult;
 import com.yijiupi.himalaya.base.webcontrol.pagemodel.PagesResult;
 @RestController
-public class DictionaryQueryController {
+public class DictionaryBaseCtrlQueryController {
 	@Autowired
-	private DictionaryQueryService dictionaryQueryService;
+	private DictionaryBaseCtrlQueryService dictionaryQueryService;
 	/**
 	 * 根据typeCode获取字典数据
 	 * @param typeCode :包装规格传PackingUnit
