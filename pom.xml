@@ -50,5 +50,6 @@
 		</dependency>
 
 	</dependencies>
+	<version>${himalaya-base-webcontrol.version}</version>
 </project>
 
