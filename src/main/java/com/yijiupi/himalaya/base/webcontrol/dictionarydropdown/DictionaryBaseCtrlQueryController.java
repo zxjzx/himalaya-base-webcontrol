@@ -14,6 +14,7 @@ import com.yijiupi.himalaya.base.webcontrol.dictionarydropdown.vo.DictionaryType
 import com.yijiupi.himalaya.base.webcontrol.dictionarydropdown.vo.DictionaryVO;
 import com.yijiupi.himalaya.base.webcontrol.pagemodel.BaseResult;
 import com.yijiupi.himalaya.base.webcontrol.pagemodel.PagesResult;
+
 @RestController
 public class DictionaryBaseCtrlQueryController {
 	@Autowired

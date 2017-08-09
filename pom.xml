@@ -6,7 +6,14 @@
 		<artifactId>himalaya-parent</artifactId>
 		<version>2.5.0-SNAPSHOT</version>
 	</parent>
+	<groupId>com.yijiupi</groupId>
 	<artifactId>himalaya-base-webcontrol</artifactId>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<destDir>${project.build.outputDirectory}/META-INF/resources/</destDir>
+	</properties>
+	
 	<build>
 		<resources>
 			<resource>
@@ -48,7 +55,10 @@
 			<groupId>com.yijiupi</groupId>
 			<artifactId>himalaya-masterdata-microservice-adminuser-core</artifactId>
 		</dependency>
-
+	<dependency>
+			<groupId>com.yijiupi</groupId>
+			<artifactId>himalaya-basic-microservice-file-core</artifactId>
+		</dependency>
 	</dependencies>
 	<version>${himalaya-base-webcontrol.version}</version>
 </project>
