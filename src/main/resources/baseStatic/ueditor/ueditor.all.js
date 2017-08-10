@@ -22654,7 +22654,7 @@ UE.plugins['elementpath'] = function(){
     var currentLevel,
         tagNames,
         me = this;
-    me.setOpt('elementPathEnabled',true);
+    //me.setOpt('elementPathEnabled',true);
     if(!me.options.elementPathEnabled){
         return;
     }
