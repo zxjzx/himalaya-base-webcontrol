@@ -24483,8 +24483,10 @@ UE.plugin.register('simpleupload', function (){
 
             wrapper.innerHTML = '<form id="edui_form_' + timestrap + '" target="edui_iframe_' + timestrap + '" method="POST" enctype="multipart/form-data" action="' + me.getOpt('serverUrl') + '" ' +
             'style="' + btnStyle + '">' +
-            '<input id="edui_input_' + timestrap + '" type="file" accept="image/*" name="image" ' +
-            'style="' + btnStyle + '">' +
+            //常见图片格式bmp,jpg,png,imaget/iff,image/gif,image/pcx,image/tga,image/exif,image/fpx,image/svg,image/psd,image/cdr,image/pcd,image/dxf,image/ufo,image/eps,image/ai,image/raw
+            '<input id="edui_input_' + timestrap + '" type="file" '+
+            'accept="image/jpg,image/jpeg,image/png,image/gif,image/psd,image/ai,image/bmp" '+
+            'name="image" ' + 'style="' + btnStyle + '">' +
             '</form>' +
             '<iframe id="edui_iframe_' + timestrap + '" name="edui_iframe_' + timestrap + '" style="display:none;width:0;height:0;border:0;margin:0;padding:0;position:absolute;"></iframe>';
 
