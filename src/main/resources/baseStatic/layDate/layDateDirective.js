@@ -7,10 +7,8 @@
 
 (function () {
 	'use strict';
-	var layDateDirective = angular.module("layDateDirective",[]);
-	/**
-	 * 选择时间-精确到时分秒
-	 */
+	var layDateDirective = angular.module("layDateModule",[]);
+	
 	layDateDirective.directive("laydateSelect",['$timeout',function($timeout){
 		return{
 			require:'?ngModel',
@@ -26,6 +24,9 @@
 				$timeout(function(){ 
 					// 初始化参数 
 					if(scope.showhms){
+						/**
+						 * 选择时间-精确到时分秒
+						 */
 						_config={
 								elem: '#' + attr.id,
 								istime: true,
@@ -44,6 +45,9 @@
 								
 							}
 					}else if(!scope.showhms){
+						/**
+						 * 选择时间-精确到天数
+						 */
 						_config={
 								elem: '#' + attr.id,
 								istoday:true,//是否显示今天
