@@ -527,7 +527,7 @@ Dates.follow = function(obj){
         obj.style.position = 'fixed';
         Dates.orien(obj, 1);
     } else {
-        obj.style.position = 'absolute';
+        obj.style.position = 'relative';
         Dates.orien(obj);
     }
 };
