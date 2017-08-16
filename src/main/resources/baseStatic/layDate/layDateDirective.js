@@ -17,54 +17,33 @@
 				ngModel:'=',
 				maxDate:'@',
                 minDate:'@',
-                showhms:'@'//是否显示时分秒
+                showhms:'@',//是否显示时分秒
+                format:'@',
 			},
 			link:function(scope,element,attr,ngModel){
 				var _date = null,_config={};
 				$timeout(function(){ 
 					// 初始化参数 
-					if(scope.showhms){
 						/**
 						 * 选择时间-精确到时分秒
 						 */
-						_config={
-								elem: '#' + attr.id,
-								istime: true,
-								istoday:true,//是否显示今天
-								festival: true,//是否开启节日
-								format: attr.format != undefined && attr.format != '' ? attr.format : 'YYYY-MM-DD hh:mm:ss',
-								max:attr.hasOwnProperty('maxDate')?attr.maxDate:'',
-								min:attr.hasOwnProperty('minDate')?attr.minDate:'',
-								start: laydate.now(0, 'YYYY-MM-DD hh:mm:ss'),    //开始日期的设置
-								choose: function(data) {//选择好日期的回调
-									scope.$apply(setViewValue);
-								},
-								clear:function(){//清除时间
-									ngModel.$setViewValue(null);
-								}
-								
+					_config={
+							elem: '#' + attr.id,
+							istime: true,
+							istoday:true,//是否显示今天
+							festival: true,//是否开启节日
+							format: scope.format ? scope.format : 'YYYY-MM-DD',
+							max:attr.hasOwnProperty('maxDate')?attr.maxDate:'',
+							min:attr.hasOwnProperty('minDate')?attr.minDate:'',
+							start: laydate.now('YYYY-MM-DD hh:mm:ss'),    //开始日期的设置
+							choose: function(data) {//选择好日期的回调
+								scope.$apply(setViewValue);
+							},
+							clear:function(){//清除时间
+								ngModel.$setViewValue(null);
 							}
-					}else if(!scope.showhms){
-						/**
-						 * 选择时间-精确到天数
-						 */
-						_config={
-								elem: '#' + attr.id,
-								istoday:true,//是否显示今天
-								festival: true,//是否开启节日
-								format: attr.format != undefined && attr.format != '' ? attr.format : 'YYYY-MM-DD',
-								max:attr.hasOwnProperty('maxDate')?attr.maxDate:'',
-								min:attr.hasOwnProperty('minDate')?attr.minDate:'',
-								start: getNowFormatDate(),    //开始日期
-								choose: function(data) {
-									scope.$apply(setViewValue);
-								},
-								clear:function(){
-									ngModel.$setViewValue(null);
-								}
-								
-							}
-					}
+							
+						}
 					
 					// 初始化参数 
 					laydate.skin('yahui');

@@ -10,15 +10,15 @@
 				labCol:'@',
 				selCol:'@',
 				isShow:'@',
-				vo:'=vo',
+				ngModel:'=',
 				typeCode:'@'
 			},
-			templateUrl:'../static/dropDownSelect/dropDownSelect.html',
+			templateUrl:'../baseStatic/dropDownSelect/dropDownSelect.html',
 			controller:['$scope','$http',function($scope,$http){
 				$scope.dropDownSelect=function(){
-					 $http.post('components/common/findAllDicListByDicType/' + $scope.typeCode + '.action').success(function(data){
-		                	if(data.result=='success'){
-		                		$scope.dropDownSelectList=data.datas.dataList;
+					 $http.get('basewebcontrol/dictionary/getDictionaryType/' + $scope.typeCode + '.action').success(function(response){
+		                	if(response.result=='success'){
+		                		$scope.dropDownSelectList=response.data.items;
 		                	}
 		                })
 					

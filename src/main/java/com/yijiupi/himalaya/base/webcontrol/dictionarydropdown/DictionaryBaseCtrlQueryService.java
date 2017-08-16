@@ -12,7 +12,7 @@ public class DictionaryBaseCtrlQueryService {
 	@Reference
 	private IDictionaryTypeService dictionaryTypeService;
 
-	public DictionaryTypeVO getDictionaryTypeDetailByCode(String typeCode) {
+	public DictionaryTypeVO getDictionaryType(String typeCode) {
 		DictionaryType model = dictionaryTypeService.getDictionaryTypeDetailByCode(typeCode);
 		if (model == null) {
 			return null;
