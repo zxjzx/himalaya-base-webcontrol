@@ -3,7 +3,12 @@
 /**
 * 使用示例
 * 时间范围：<input type="text" id="beginTime" laydate-select  ng-model="vo.rangeDate" show-range="show">
-* 单个时间<input type="text" id="single" laydate-select time-type="datetime" ng-model="vo.single">                              
+* 单个时间<input type="text" id="single" laydate-select time-type="datetime" ng-model="vo.single">   
+* js对时间范围进行控制：
+* 	if($scope.vo.rangeDate){
+		$scope.vo.beginDate = $scope.vo.rangeDate.slice(0,10);
+		$scope.vo.endDate = $scope.vo.rangeDate.slice(13,23);
+	}                           
 */
 
 (function () {
