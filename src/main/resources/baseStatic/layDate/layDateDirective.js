@@ -2,7 +2,13 @@
 
 /**
 * 使用示例
-* <input def-laydate type="text" id="id1" ng-model="startTime"/>
+* 时间范围：<input type="text" id="beginTime" laydate-select  ng-model="vo.rangeDate" show-range="show">
+* 单个时间<input type="text" id="single" laydate-select time-type="datetime" ng-model="vo.single">   
+* js对时间范围进行控制：
+* 	if($scope.vo.rangeDate){
+		$scope.vo.beginDate = $scope.vo.rangeDate.slice(0,10);
+		$scope.vo.endDate = $scope.vo.rangeDate.slice(13,23);
+	}                           
 */
 
 (function () {
@@ -15,89 +21,39 @@
 			restrict:'AE',
 			scope:{
 				ngModel:'=',
-				maxDate:'@',
-                minDate:'@',
-                showhms:'@',//是否显示时分秒
-                format:'@',
+				showRange:'@',
+				timeType:'@'
 			},
 			link:function(scope,element,attr,ngModel){
-				var _date = null,_config={};
-				$timeout(function(){ 
-					// 初始化参数 
-						/**
-						 * 选择时间-精确到时分秒
-						 */
-					_config={
-							elem: '#' + attr.id,
-							istime: true,
-							istoday:true,//是否显示今天
-							festival: true,//是否开启节日
-							format: scope.format ? scope.format : 'YYYY-MM-DD',
-							max:attr.hasOwnProperty('maxDate')?attr.maxDate:'',
-							min:attr.hasOwnProperty('minDate')?attr.minDate:'',
-							start: laydate.now('YYYY-MM-DD hh:mm:ss'),    //开始日期的设置
-							choose: function(data) {//选择好日期的回调
-								scope.$apply(setViewValue);
-							},
-							clear:function(){//清除时间
-								ngModel.$setViewValue(null);
-							}
-							
-						}
-					
-					// 初始化参数 
-					laydate.skin('yahui');
-					_date = laydate(_config);
-					
-					// 监听日期最大值
-                    if(attr.hasOwnProperty('maxDate')){
-                        attr.$observe('maxDate', function (val) {
-                            _config.max = val;
-                        })
-                    }
-                    // 监听日期最小值
-                    if(attr.hasOwnProperty('minDate')){
-                       attr.$observe('minDate', function (val) {
-                            _config.min = val;
-                        })
-                    }
-					
-					//// 模型值同步到视图上
-					ngModel.$render = function() {
-						element.val(ngModel.$viewValue || '');
-					};
-					
-					// 监听元素上的事件
-					element.on('blur keyup change', function() {
-						scope.$apply(setViewValue);
+				
+				var _date = null,rangeConfig={},singleConfig={};
+				$timeout(function(){
+					//有范围的选择
+					var rangeConfig = ({
+						elem: '#' + attr.id, //指定元素
+						range:true,//显示时间范围，用于一个输入框
+						theme: '#3598DC',//主题颜色
+						mark:'true',
+						type: attr.timeType?attr.timeType:'datetime',
+						done: function(value,date) {//选择好日期的回调
+							ngModel.$setViewValue(value);//将得到的日期返回给页面显示
+						},
 					});
-					
-					setViewValue();
-					
-					// 更新模型上的视图值
-					function setViewValue() {
-						var val = element.val();
-						ngModel.$setViewValue(element.val());
+					var singleConfig = ({
+						elem: '#' + attr.id, //指定元素
+						theme: '#3598DC',//主题颜色
+						mark:'true',
+						type: attr.timeType?attr.timeType:'datetime',
+						done: function(value,date) {//选择好日期的回调
+							ngModel.$setViewValue(value);//将得到的日期返回给页面显示
+						},
+					})
+					if(attr.showRange){
+						var _date = laydate.render(rangeConfig);
+					}else{
+						var _date = laydate.render(singleConfig);
 					}
 					
-					//获取当前时间
-					function getNowFormatDate() {
-					    var date = new Date();
-					    var seperator1 = "-";
-					    var seperator2 = ":";
-					    var month = date.getMonth() + 1;
-					    var strDate = date.getDate();
-					    if (month >= 1 && month <= 9) {
-					        month = "0" + month;
-					    }
-					    if (strDate >= 0 && strDate <= 9) {
-					        strDate = "0" + strDate;
-					    }
-					    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
-					            + " " + date.getHours() + seperator2 + date.getMinutes()
-					            + seperator2 + date.getSeconds();
-					    return currentdate;
-					}
 				},0)
 			}
 		}
