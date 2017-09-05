@@ -44,12 +44,14 @@ public class FileUploadBaseController {
 	 */
 	@RequestMapping(value = "/common/uploadFile")
 	public BaseResult uploadFile(@RequestParam(value="action",required = false) String action,@RequestParam(value="noCache",required = false) String noCache, MultipartFile image) {
-		
+		if(image == null){
+			return new ROResult<FileInfoRO>(new FileInfoRO());
+		}
 		FileConfig fileConfig = iFileService.getFileConfig(PicCategory.Banner);
 		FileInfoDTO fileInfoDTO = FileUpdateHelper.uploadPicFile(image, "1", fileConfig);
 	    com.yijiupi.himalaya.basic.file.domain.FileInfo fileInfoModel = iFileService.saveFile(fileInfoDTO);
 	    FileInfoRO ro = FileInfoConverter.converterRO(fileInfoModel);
-		ROResult<FileInfoRO> result = new ROResult<FileInfoRO>(ro);
+	    ROResult<FileInfoRO> result = new ROResult<FileInfoRO>(ro);
 		return result;
 	}
 
