@@ -26,16 +26,6 @@ public class WebConstant {
 	public static final String RESULT_ERROR = "error";
 
 	/**
-	 * Cookie中，用户信息关键字
-	 */
-	public static final String COOKIE_USERINFO = "YJP_OP_UserInfo";
-
-	/**
-	 * cookie 中存放自定义会话信息的标识名
-	 */
-	public final static String YJP_COOKIE_ID = "YJPID";
-
-	/**
 	 * 活动复制到当前月
 	 */
 	public static final int NOW_MONTH = 0;
