@@ -19,6 +19,17 @@
      * 因此，UEditor提供了针对不同页面的编辑器可单独配置的根路径，具体来说，在需要实例化编辑器的页面最顶部写上如下代码即可。当然，需要令此处的URL等于对应的配置。
      * window.UEDITOR_HOME_URL = "/xxxx/xxxx/";
      */
+	"videoActionName": "uploadVideoFiles", /* 执行上传视频的action名称 */
+    "videoFieldName": "file", /* 提交的视频表单名称 */
+    "videoPathFormat": "upload/video/{yyyy}{mm}{dd}/{time}{rand:6}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
+    "videoUrlPrefix": "/ueditor/net/", /* 视频访问路径前缀 */
+    "videoMaxSize": 512400000, /* 上传大小限制，单位B，默认100MB */
+    "videoAllowFiles": [
+        ".flv", ".swf", ".mkv", ".avi", ".rm", ".rmvb", ".mpeg", ".mpg",
+        ".ogg", ".ogv", ".mov", ".wmv", ".mp4", ".webm", ".mp3", ".wav", ".mid"], /* 上传视频格式显示 */
+		
+        
+        
     var URL = window.UEDITOR_HOME_URL || getUEBasePath();
 
     /**
