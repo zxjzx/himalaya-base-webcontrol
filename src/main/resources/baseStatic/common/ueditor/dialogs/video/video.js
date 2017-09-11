@@ -72,7 +72,7 @@
      */
     function addOkListener(){
         dialog.onok = function(){
-            $G("preview").innerHTML = "";
+            //$G("preview").innerHTML = "";
             var currentTab =  findFocus("tabHeads","tabSrc");
             switch(currentTab){
                 case "video":
@@ -120,12 +120,14 @@
             align = findFocus("videoFloat","name");
         if(!url) return false;
         if ( !checkNum( [width, height] ) ) return false;
+        
         editor.execCommand('insertvideo', {
             url: convert_url(url),
             width: width.value,
             height: height.value,
             align: align
-        }, isModifyUploadVideo ? 'upload':null);
+        }, isModifyUploadVideo ? 'upload':'upload');
+        
     }
 
     /**
@@ -272,18 +274,26 @@
 
         conUrl = utils.unhtmlForUrl(conUrl);
 
-        $G("preview").innerHTML = '<div class="previewMsg"><span>'+lang.urlError+'</span></div>'+
+        /*$G("preview").innerHTML = '<div class="previewMsg"><span>'+lang.urlError+'</span></div>'+
         '<embed class="previewVideo" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"' +
             ' src="' + conUrl + '"' +
             ' width="' + 420  + '"' +
             ' height="' + 280  + '"' +
             ' wmode="transparent" play="true" loop="false" menu="false" allowscriptaccess="never" allowfullscreen="true" >' +
-        '</embed>';
+        '</embed>';*/
+        
+        $G("preview").innerHTML = '<div class="previewMsg"><span>'+lang.urlError+'</span></div>'+
+        '<video class="previewVideo" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"' +
+            ' src="' + conUrl + '"' +
+            'controls width="' + 420  + '"' +
+            ' height="' + 280  + '"' +
+            ' wmode="transparent" play="true" loop="false" menu="false" allowscriptaccess="never" allowfullscreen="true" >' +
+        '<source src="' + conUrl + '" type="video/'  + '" /></video>';
     }
 
 
     /* 插入上传视频 */
-    function insertUpload(){
+    /*function insertUpload(){
         var videoObjs=[],
             uploadDir = editor.getOpt('videoUrlPrefix'),
             width = parseInt($G('upload_width').value, 10) || 420,
@@ -306,7 +316,7 @@
         } else {
             editor.execCommand('insertvideo', videoObjs, 'upload');
         }
-    }
+    }*/
 
     /*初始化上传标签*/
     function initUpload(){

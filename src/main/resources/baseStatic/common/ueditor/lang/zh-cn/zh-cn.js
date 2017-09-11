@@ -346,7 +346,7 @@ UE.I18N['zh-cn'] = {
         'static':{
             'lang_tab_insertV':"插入视频",
             'lang_tab_searchV':"搜索视频",
-            'lang_tab_uploadV':"上传视频",
+            /*'lang_tab_uploadV':"上传视频",*/
             'lang_video_url':"视频网址",
             'lang_video_size':"视频尺寸",
             'lang_videoW':"宽度",
