@@ -46,15 +46,7 @@
 			<groupId>com.yijiupi</groupId>
 			<artifactId>himalaya-trading-microservice-setting-core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.yijiupi</groupId>
-			<artifactId>himalaya-masterdata-microservice-productcategory-core</artifactId>
-		</dependency>
 
-		<dependency>
-			<groupId>com.yijiupi</groupId>
-			<artifactId>himalaya-masterdata-microservice-adminuser-core</artifactId>
-		</dependency>
 	<dependency>
 			<groupId>com.yijiupi</groupId>
 			<artifactId>himalaya-basic-microservice-file-core</artifactId>
