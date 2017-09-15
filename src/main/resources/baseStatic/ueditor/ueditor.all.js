@@ -24575,7 +24575,13 @@ UE.plugin.register('simpleupload', function (){
                     showErrorLoader(me.getLang('simpleupload.exceedTypeError'));
                     return;
                 }
-
+ 
+                var fileSize = input.files[0].size/1024;//k
+                if(fileSize>100){
+                	showErrorLoader("图片不能超过100k")
+                	return;
+                }
+                
                 domUtils.on(iframe, 'load', callback);
                 form.action = utils.formatUrl(imageActionUrl + (imageActionUrl.indexOf('?') == -1 ? '?':'&') + params);
                 form.submit();
