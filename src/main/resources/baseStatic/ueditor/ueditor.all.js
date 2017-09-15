@@ -24582,7 +24582,6 @@ UE.plugin.register('simpleupload', function (){
                 	return;
                 }
                 
-
                 domUtils.on(iframe, 'load', callback);
                 form.action = utils.formatUrl(imageActionUrl + (imageActionUrl.indexOf('?') == -1 ? '?':'&') + params);
                 form.submit();
