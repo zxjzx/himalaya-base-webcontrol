@@ -14,7 +14,7 @@
 			selectedData : '=',
 			levelNumber : '@',
 		},
-		templateUrl:'js/directives/administrativeAddress/administrativeAddress.html' ,
+		templateUrl:'../baseStatic/administrativeAddress/administrativeAddress.html' ,
 		controller:function($scope,$element,$http,CityRegionService){
 			
 			//初始化入参
@@ -34,22 +34,22 @@
            * $scope.leveleNumber : 1(显示省份) ,2(显示省份，城市),3(显示省份，城市，区县),4(显示省份,城市,区县,街道)
            */
             $scope.levelNumber = $scope.levelNumber ? $scope.levelNumber : 4 ; //默认为四级联动
-            if($scope.leveleNumber == 1){
+            if($scope.levelNumber == "1"){
             	$scope.cityLevelNameList = [
                     {'levelNum' : '0' ,'name' : '省份','classCss' :'citySel', 'dataList' : []}, 
                  ]
-            }else if($scope.leveleNumber == 2){
+            }else if($scope.levelNumber == "2"){
             	$scope.cityLevelNameList = [
 	                {'levelNum' : '0' ,'name' : '省份','classCss' :'citySel', 'dataList' : []}, 
 	                {'levelNum' : '1' ,'name' : '城市'},
 	             ]
-            }else if($scope.leveleNumber == 3){
+            }else if($scope.levelNumber == "3"){
             	$scope.cityLevelNameList = [
 	                {'levelNum' : '0' ,'name' : '省份','classCss' :'citySel', 'dataList' : []}, 
 	                {'levelNum' : '1' ,'name' : '城市'},
 	                {'levelNum' : '2' ,'name' : '区县'},
 	             ]
-            }else if($scope.leveleNumber == 4){
+            }else if($scope.levelNumber == "4"){
             	$scope.cityLevelNameList = [
 	                {'levelNum' : '0' ,'name' : '省份','classCss' :'citySel', 'dataList' : []}, 
 	                {'levelNum' : '1' ,'name' : '城市'},
@@ -62,8 +62,12 @@
             $scope.isOpenModel = false ;
             //点击打开城市选择框
             $scope.openAddressModel = function(){
-            	selectedList = [] ;
             	$scope.isOpenModel = true ;
+            	selectedList = [] ;
+            	angular.forEach($scope.cityLevelNameList,function(levelItem){
+            		levelItem.classCss = ""  ;
+            		$scope.cityLevelNameList[0].classCss = "citySel" ;
+            	})
             }
             
             //关闭选择框
@@ -105,7 +109,7 @@
             $scope.clickedA = function(levelItem,dataItem){
             	selectedObjList.push(dataItem);
             	selectedList.push(dataItem.name);
-            	$scope.vo.address = selectedList.join("/");
+            	$scope.vo.address = selectedList.join(" / ");
             	var levelNum = Number(levelItem.levelNum) ;
             	var nextLevelNum = Number(levelItem.levelNum) + 1;
             	if(nextLevelNum < $scope.cityLevelNameList.length){
