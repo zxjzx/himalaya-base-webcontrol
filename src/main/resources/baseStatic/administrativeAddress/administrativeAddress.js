@@ -11,8 +11,10 @@
 	return {
 		restrict : 'EA',
 		scope : {
+			fullName : '=' ,
 			selectedData : '=',
 			levelNumber : '@',
+			selectedAddressFun : '=' //选择具体城市的触发函数
 		},
 		templateUrl:'../baseStatic/administrativeAddress/administrativeAddress.html' ,
 		controller:function($scope,$element,$http,CityRegionService){
@@ -22,8 +24,10 @@
 			//初始化返回参数
 			$scope.selectedData = {} ;
 			
-			//显示在input框中的名字
-			$scope.vo.address = "" ;
+			if($scope.fullName){
+				$scope.vo.address = $scope.fullName ; 
+			}
+			
 			//收集的选中的城市的名称的集合
             var selectedList = [] ;
             //收集选中的城市数据对象集合
