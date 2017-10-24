@@ -26,7 +26,7 @@
 				<div class="_citys1" ng-repeat="levelItem in cityLevelNameList" ng-if="levelItem.classCss">
 					<a ng-repeat="dataItem in levelItem.dataList" 
 						href="javascript:void(0);" value="dataItem.id"
-						ng-click="clickedA(levelItem,dataItem)">{{dataItem.name}}</a>
+						ng-click="clickedA(levelItem,dataItem);selectedAddressFun(dataItem);">{{dataItem.name}}</a>
 				</div>
 			</div>
 		</div>
