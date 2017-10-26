@@ -1,6 +1,6 @@
 /**
  *  行政地址选择指令
- *  例 : <administrative-address selected-data="selectedData" level-number="2"></administrative-address>
+ *  例 : <administrative-address selected-data="selectedData" level-number="2" selected-address-fun="" full-name=""></administrative-address>
  */
 (function(){
 	'use strict' ;
@@ -22,7 +22,6 @@
 			//初始化入参
 			$scope.vo = {} ;
 			//初始化返回参数
-			$scope.selectedData = {} ;
 			
 			if($scope.fullName){
 				$scope.vo.address = $scope.fullName ; 
