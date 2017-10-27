@@ -110,7 +110,15 @@
             
             //选择具体的省市县街道触发函数
             $scope.clickedA = function(levelItem,dataItem){
-            	selectedObjList.push(dataItem);
+            	if(levelItem.levelNum==0){ //省
+            		selectedObjList['province'] = dataItem ;
+            	}else if(levelItem.levelNum == 1){ //市
+            		selectedObjList['city'] = dataItem ;
+            	}else if(levelItem.levelNum == 2){ //区
+            		selectedObjList['county'] = dataItem ;
+            	}else if(levelItem.levelNum == 3){ //街道
+            		selectedObjList['street'] = dataItem ;
+            	}
             	selectedList.push(dataItem.name);
             	$scope.vo.address = selectedList.join(" / ");
             	var levelNum = Number(levelItem.levelNum) ;
