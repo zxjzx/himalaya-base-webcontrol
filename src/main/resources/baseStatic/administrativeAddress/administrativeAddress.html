@@ -2,15 +2,16 @@
 	<style>
 		ul, ol, dl { list-style: none; }
 		.boxTop {positive:relative ;}
-		._citys {width: 465px;border: 2px solid #eee; margin-left: 15px; padding: 5px; position: absolute; z-index:1;}
+		._citys {width: 500px;border: 2px solid #eee; margin-left: 15px; padding: 5px; position: absolute; z-index:1;}
 		._citys span { color: #56b4f8; height: 15px; width: 15px; line-height: 15px; text-align: center; border-radius: 3px; position: 
 				absolute; right: 10px; top: 10px; border: 1px solid #56b4f8; cursor: pointer; }
 		._citys0 { width: 100%; height: 34px; display: inline-block; border-bottom: 2px solid #56b4f8; padding: 0; margin: 0; }
 		._citys0 li { display: inline-block; line-height: 34px; font-size: 15px; color: #888; width: 80px; text-align: center; cursor: pointer; }
 		.citySel { background-color: #56b4f8; color: #fff !important; }
 		._citys1 { width: 100%; display: inline-block; padding: 10px 0; }
-		._citys1 a { width: 83px; height: 35px; display: inline-block; background-color: #f5f5f5; color: #666; margin-left: 6px; 
-				 margin-top: 3px; line-height: 35px; text-align: center; cursor: pointer; font-size: 13px; overflow: hidden; }
+		._citys1 a { width: 90px; height: 35px; display: inline-block; background-color: #f5f5f5; color: #666; margin-left: 6px; 
+				 margin-top: 3px; line-height: 35px; text-align: center; cursor: pointer; font-size: 13px; overflow :hidden ; 
+				 word-break:keep-all;white-space : nowrap ;text-overflow : ellipsis ;}
 		._citys1 a:hover { color: #fff; background-color: #56b4f8; }
 	</style>
 	<!-- 行政地址四级选择模态框 -->
@@ -24,7 +25,7 @@
 					ng-click="clickedCityLevel(levelItem)" value="levelItem.levelNum">{{levelItem.name}}</li>
 				</ul>
 				<div class="_citys1" ng-repeat="levelItem in cityLevelNameList" ng-if="levelItem.classCss">
-					<a ng-repeat="dataItem in levelItem.dataList" 
+					<a ng-repeat="dataItem in levelItem.dataList" title="{{dataItem.name}}"
 						href="javascript:void(0);" value="dataItem.id"
 						ng-click="clickedA(levelItem,dataItem);selectedAddressFun(dataItem);">{{dataItem.name}}</a>
 				</div>
