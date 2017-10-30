@@ -1,79 +1,80 @@
-<div class="portlet-body">
-	<div class="table-scrollable table-scrollable-borderless">
-		<table class="table table-hover table-light">
-			<thead>
-				<tr class="uppercase">
-					<th width="30%">Name</th>
-					<th>描述</th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th>操作</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr ng-repeat="item in picList">
-					<td>
-						
-						<img alt="图片" ng-src="{{item.url}}"  width="100" height="100">
-					</td>
-					<td>图片大小400*400，格式（JPG，PNG，GIF）</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td>
-						<button type="button" class="btn btn-danger btn-xs" ng-click="remove(item)">
-							<span class="glyphicon glyphicon-trash"></span> 移除
-						</button>
-						<button ng-if="!item.isDefault" type="button"
-							class="btn btn-danger btn-xs" ng-click="setDefault(item)">
-							<span class="glyphicon glyphicon-trash"></span> 设为默认图片
-						</button>
-					</td>
-				</tr>
-				<tr ng-repeat="item in uploader.queue">
-					<td>
-						<strong>{{ item.file.name }}</strong>
-						<div ng-show="uploader.isHTML5" ng-thumb="{ file: item._file, width:100,height: 100 }"></div>
-					</td>
-					<td>图片大小400*400，格式（JPG，PNG，GIF）</td>
-					<td ng-show="uploader.isHTML5" nowrap>{{item.file.size/1024/1024|number:3 }} MB</td>
-					<td ng-show="uploader.isHTML5">
-						<div class="progress progress-sm">
-							<div class="progress-bar progress-bar-info" role="progressbar"
-								ng-style="{ 'width': item.progress + '%' }"></div>
-						</div>
-					</td>
-					<td class="text-center">
-						<span ng-show="item.isSuccess" class="text-success"><i class="glyphicon glyphicon-ok"></i></span>
-						<span ng-show="item.isCancel" class="text-info"><i class="glyphicon glyphicon-ban-circle"></i></span> 
-						<span ng-show="item.isError" class="text-danger"><i class="glyphicon glyphicon-remove"></i></span></td>
-					<td nowrap>
-						<button type="button" class="btn btn-warning btn-xs" ng-disabled="true">
-							<span class="glyphicon glyphicon-ban-circle"></span> 等待上传
-						</button>
-						<button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
-							<span class="glyphicon glyphicon-trash"></span> 移除
-						</button>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+<table class="table table-hover table-light">
+	<thead>
+		<tr class="uppercase">
+			<th width="30%">Name</th>
+			<th>描述</th>
+			<th></th>
+			<th></th>
+			<th></th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="item in picList" ng-if="picList.length!=0">
+			<td>
+				<img alt="图片" ng-src="{{item.url}}"  width="100" height="100">
+			</td>
+			<td>图片大小400*400，格式（JPG，PNG，GIF）</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td>
+				<button type="button" class="btn btn-danger btn-xs" ng-click="remove(item)">
+					<span class="glyphicon glyphicon-trash"></span> 移除
+				</button>
+				<button ng-if="!item.isDefault" type="button"
+					class="btn btn-danger btn-xs" ng-click="setDefault(item)">
+					<span class="glyphicon glyphicon-trash"></span> 设为默认图片
+				</button>
+			</td>
+		</tr>
+		<tr ng-repeat="item in uploader.queue">
+			<td>
+				<strong>{{ item.file.name }}</strong>
+				<div ng-show="uploader.isHTML5" ng-thumb="{ file: item._file, width:100,height: 100 }"></div>
+			</td>
+			<td>图片大小400*400，格式（JPG，PNG，GIF）</td>
+			<td ng-show="uploader.isHTML5" nowrap>
+				{{item.file.size/1024/1024|number:3 }} MB
+				<button type="button" class="btn btn-warning btn-xs"> 等待上传
+				</button>
+			</td>
+			<td ng-show="uploader.isHTML5">
+				<div class="progress progress-sm">
+					<div class="progress-bar progress-bar-info" role="progressbar"
+						ng-style="{ 'width': item.progress + '%' }"></div>
+				</div>
+			</td>
+			<td class="text-center">
+				<span ng-show="item.isSuccess" class="text-success"><i class="glyphicon glyphicon-ok"></i></span>
+				<span ng-show="item.isCancel" class="text-info"><i class="glyphicon glyphicon-ban-circle"></i></span> 
+				<span ng-show="item.isError" class="text-danger"><i class="glyphicon glyphicon-remove"></i></span>
+			</td>
+			<td nowrap>
+				<button type="button" class="btn btn-success btn-xs"
+					ng-click="item.upload()" ng-disabled="!uploader.getNotUploadedItems().length">
+					<span class="glyphicon glyphicon-upload"></span> 单个上传
+				</button>
+				<button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+					<span class="glyphicon glyphicon-trash"></span> 移除
+				</button>
+			</td>
+		</tr>
+	</tbody>
+</table>
+	
+<div> 
+	<div class="col-md-2 promotion-img">
+		<a href="javascript:;"> 
+			<input class="btn btn-warning btn-s" type="file" nv-file-select="" accept="image/png,image/gif,image/jpeg" uploader="uploader" multiple><span
+						class="btn btn-primary">点击上传图片</span>
+		</a>
 	</div>
-	<span> 
-			
-		<div class="col-md-2 promotion-img">
-			<a href="javascript:;"> 
-				<input class="btn btn-warning btn-s" type="file" nv-file-select="" accept="image/png,image/gif,image/jpeg" uploader="uploader" multiple><span
-							class="btn btn-primary">点击上传图片</span>
-			</a>
-		</div>
-		
-		<button type="button" class="btn btn-success btn-s"
-			ng-click="uploader.uploadAll()">
-			<span class="glyphicon glyphicon-upload"></span> 上传所有
-		</button>
-		<button type="button" class="btn btn-danger btn-s">
-			<span class="glyphicon glyphicon-trash"></span> 移除所有待上传文件
-		</button>
-	</span>
+	<button type="button" class="btn btn-success btn-s"
+		ng-click="uploader.uploadAll()" ng-disabled="!uploader.getNotUploadedItems().length">
+		<span class="glyphicon glyphicon-upload"></span> 上传所有
+	</button>
+	<button type="button" class="btn btn-danger btn-s" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length">
+		<span class="glyphicon glyphicon-trash"></span> 移除所有待上传文件
+	</button>
+</div>
