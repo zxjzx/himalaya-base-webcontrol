@@ -1,5 +1,6 @@
-
-
+/*
+<upload-img uploader-name="uploader1" pic-list="picList"
+				ng-if="picList" id="id" set-default="setDefaultImg"></upload-img>*/
 (function() {
 	'use strict';
 
@@ -23,12 +24,10 @@
 				var uploader = $scope.uploader = new FileUploader({
 					url: 'common/uploadFile/' + $scope.id + '/0/' + getUserInfo.userInfo().userId + '.action',
 					removeAfterUpload: 'true',
-//					queueLimit:$scope.queueLimit?$scope.queueLimit:10,//最多同时上传的文件个数,如果不设置默认为1
+					queueLimit:$scope.queueLimit?$scope.queueLimit:10,//最多同时上传的文件个数,如果不设置默认为1
 					// 限制文件大小为100k
 	    			filters : [ picFilter.sizeFilter ]
 				});
-				$scope.uploaderName = $scope.uploader;
-			
 				
 				//上传预览成功
 				uploader.onAfterAddingFile = function (fileItem) {
