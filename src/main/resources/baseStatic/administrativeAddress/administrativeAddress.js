@@ -110,10 +110,10 @@
             
             //选择具体的省市县街道触发函数
             $scope.clickedA = function(levelItem,dataItem){
-            	
             	var levelNum = Number(levelItem.levelNum) ;
             	var nextLevelNum = Number(levelItem.levelNum) + 1;
             	var deleteNum;//删除几项
+            	
             	if(levelNum === 0){ //省
             		selectedObjList['province'] = dataItem ;
             		deleteNum = 4;
@@ -127,11 +127,10 @@
             		selectedObjList['street'] = dataItem ;
             		deleteNum = 1;
             	}
+            	selectedList.splice(levelNum,deleteNum);
             	
-            	selectedList.splice(levelNum,deleteNum)
             	selectedList.push(dataItem.name);
             	$scope.vo.address = selectedList.join(" / ");
-            	
             	
             	if(nextLevelNum < $scope.cityLevelNameList.length){
             		$scope.cityLevelNameList[levelNum].classCss = "" ;
