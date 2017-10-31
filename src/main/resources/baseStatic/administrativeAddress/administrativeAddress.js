@@ -66,7 +66,7 @@
             //点击打开城市选择框
             $scope.openAddressModel = function(){
             	$scope.isOpenModel = true ;
-            	selectedList = [] ;
+//            	selectedList = [] ;
             	angular.forEach($scope.cityLevelNameList,function(levelItem){
             		levelItem.classCss = ""  ;
             		$scope.cityLevelNameList[0].classCss = "citySel" ;
@@ -81,12 +81,12 @@
             //点击省，市，区，街道。切换样式,数据
             $scope.clickedCityLevel = function(item){
             	var levelNum = item.levelNum ;
-            	if(levelNum != 0){
+            	/*if(levelNum != 0){
             		$scope.cityLevelNameList[levelNum].dataList = [] ;
             	}else if(levelNum == 0){
             		$scope.vo.address = "" ;
             		selectedList = [] ;
-            	}
+            	}*/
             	angular.forEach($scope.cityLevelNameList,function(levelItem){
             		levelItem.classCss = ""  ;
             		if(levelItem.levelNum == item.levelNum){
@@ -110,19 +110,28 @@
             
             //选择具体的省市县街道触发函数
             $scope.clickedA = function(levelItem,dataItem){
-            	if(levelItem.levelNum==0){ //省
-            		selectedObjList['province'] = dataItem ;
-            	}else if(levelItem.levelNum == 1){ //市
-            		selectedObjList['city'] = dataItem ;
-            	}else if(levelItem.levelNum == 2){ //区
-            		selectedObjList['county'] = dataItem ;
-            	}else if(levelItem.levelNum == 3){ //街道
-            		selectedObjList['street'] = dataItem ;
-            	}
-            	selectedList.push(dataItem.name);
-            	$scope.vo.address = selectedList.join(" / ");
             	var levelNum = Number(levelItem.levelNum) ;
             	var nextLevelNum = Number(levelItem.levelNum) + 1;
+            	var deleteNum;//删除几项
+            	
+            	if(levelNum === 0){ //省
+            		selectedObjList['province'] = dataItem ;
+            		deleteNum = 4;
+            	}else if(levelNum === 1){ //市
+            		selectedObjList['city'] = dataItem ;
+            		deleteNum = 3;
+            	}else if(levelNum === 2){ //区
+            		selectedObjList['county'] = dataItem ;
+            		deleteNum = 2;
+            	}else if(levelNum === 3){ //街道
+            		selectedObjList['street'] = dataItem ;
+            		deleteNum = 1;
+            	}
+            	selectedList.splice(levelNum,deleteNum);
+            	
+            	selectedList.push(dataItem.name);
+            	$scope.vo.address = selectedList.join(" / ");
+            	
             	if(nextLevelNum < $scope.cityLevelNameList.length){
             		$scope.cityLevelNameList[levelNum].classCss = "" ;
                 	$scope.cityLevelNameList[nextLevelNum].classCss = "citySel" ;
@@ -131,7 +140,7 @@
             		$scope.isOpenModel = false ;
             		$scope.cityLevelNameList[levelNum].classCss = "" ;
                 	$scope.cityLevelNameList[0].classCss = "citySel" ;
-            		getDataListByCode(0,0);//初始化省
+            		//getDataListByCode(0,0);//初始化省
             	}
             	$scope.selectedData.selectedObjList = selectedObjList ;
             	$scope.selectedData.fullName = $scope.vo.address ;
