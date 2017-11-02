@@ -16,7 +16,7 @@
 	</style>
 	<!-- 行政地址四级选择模态框 -->
 	<div class="boxTop">
-		<input type="text" class="form-control" ng-model="vo.address" ng-click="openAddressModel()" ng-blur="onBlur()" />
+		<input type="text" class="form-control" ng-model="vo.address" ng-click="openAddressModel()" ng-blur="onBlur()" readonly/>
 		<div class="row" ng-if="isOpenModel" >
 			<div class="_citys" style="background:#ddd">
 				<span title="关闭" id="cColse" ng-click="close()">×</span>
