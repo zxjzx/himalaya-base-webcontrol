@@ -13,6 +13,7 @@
 				 margin-top: 3px; line-height: 35px; text-align: center; cursor: pointer; font-size: 13px; overflow :hidden ; 
 				 word-break:keep-all;white-space : nowrap ;text-overflow : ellipsis ;}
 		._citys1 a:hover { color: #fff; background-color: #56b4f8; }
+		.selectedCity {color: #fff !important; background-color: #56b4f8 !important;}
 	</style>
 	<!-- 行政地址四级选择模态框 -->
 	<div class="boxTop">
@@ -25,7 +26,7 @@
 					ng-click="clickedCityLevel(levelItem)" value="levelItem.levelNum">{{levelItem.name}}</li>
 				</ul>
 				<div class="_citys1" ng-repeat="levelItem in cityLevelNameList" ng-if="levelItem.classCss">
-					<a ng-repeat="dataItem in levelItem.dataList" title="{{dataItem.name}}"
+					<a ng-repeat="dataItem in levelItem.dataList" title="{{dataItem.name}}" class="{{dataItem.selectedCss}}" 
 						href="javascript:void(0);" value="dataItem.id"
 						ng-click="clickedA(levelItem,dataItem);selectedAddressFun(dataItem);">{{dataItem.name}}</a>
 				</div>
