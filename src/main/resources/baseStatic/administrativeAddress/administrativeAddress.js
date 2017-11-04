@@ -13,7 +13,7 @@
 		scope : {
 			fullName : '=' , //已选中的地址集合
 			selectedData : '=', //选中之后的返回参数
-			levelCodeber : '@', //显示levelCodeber级联动
+			levelNumber : '@', //显示levelNumber级联动
 			selectedAddressFun : '=' //选择具体城市的触发函数
 		},
 		templateUrl:'../baseStatic/administrativeAddress/administrativeAddress.html' ,
@@ -31,23 +31,23 @@
            * 根据$scope.leveleNumber的值判断显示省份，城市，区县，街道的显示
            * $scope.leveleNumber : 1(显示省份) ,2(显示省份，城市),3(显示省份，城市，区县),4(显示省份,城市,区县,街道)
            */
-            $scope.levelCodeber = $scope.levelCodeber ? $scope.levelCodeber : 4 ; //默认为四级联动
-            if($scope.levelCodeber == "1"){
+            $scope.levelNumber = $scope.levelNumber ? $scope.levelNumber : 4 ; //默认为四级联动
+            if($scope.levelNumber == "1"){
             	$scope.cityLevelNameList = [
                     {'levelCode' : '0' ,'name' : '省份','classCss' :'citySel', 'dataList' : []}, 
                  ]
-            }else if($scope.levelCodeber == "2"){
+            }else if($scope.levelNumber == "2"){
             	$scope.cityLevelNameList = [
 	                {'levelCode' : '0' ,'name' : '省份','classCss' :'citySel', 'dataList' : []}, 
 	                {'levelCode' : '1' ,'name' : '城市'},
 	             ]
-            }else if($scope.levelCodeber == "3"){
+            }else if($scope.levelNumber == "3"){
             	$scope.cityLevelNameList = [
 	                {'levelCode' : '0' ,'name' : '省份','classCss' :'citySel', 'dataList' : []}, 
 	                {'levelCode' : '1' ,'name' : '城市'},
 	                {'levelCode' : '2' ,'name' : '区县'},
 	             ]
-            }else if($scope.levelCodeber == "4"){
+            }else if($scope.levelNumber == "4"){
             	$scope.cityLevelNameList = [
 	                {'levelCode' : '0' ,'name' : '省份','classCss' :'citySel', 'dataList' : []}, 
 	                {'levelCode' : '1' ,'name' : '城市'},
