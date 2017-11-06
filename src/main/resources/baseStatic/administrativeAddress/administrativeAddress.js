@@ -107,6 +107,14 @@
             $scope.clickedA = function(levelItem,dataItem){
             	var levelCode = Number(levelItem.levelCode) ;
             	var nextlevelCode = Number(levelItem.levelCode) + 1;
+            	
+            	//重新选择城市之后，清空之前城市所关联的城市
+            	$scope.cityLevelNameList.forEach(function(item){
+            		if(item.levelCode > levelCode){
+            			item.dataList = [];
+            		}
+            	})
+            	
             	var deleteNum;//删除几项
             	if(levelCode === 0){ //省
             		deleteNum = 4;
@@ -151,13 +159,14 @@
             var initAddressDataFun = function(code,levelCode){
             	CityRegionService.findDirectChildrenByParentCode(code).then(function(data){
             		if($scope.cityLevelNameList[levelCode]){
-            			$scope.cityLevelNameList[levelCode].dataList = data.list;
-      	        		$scope.cityLevelNameList[levelCode].dataList.forEach(function(dataItem){
+            			var dataList = data.list;
+            			dataList.forEach(function(dataItem){
       	        			if(dataItem.name == $scope.initAddressList[levelCode]){
       	        				dataItem.selectedCss = 'selectedCity' ;
       	        				selectedObjList.push(dataItem);
       	        				convertSelectedDate(selectedObjList) ;
       	        				$scope.selectedData.selectedObjList = selectedDataObjList ;
+      	        				$scope.cityLevelNameList[levelCode].dataList = data.list;
       	        				initAddressDataFun(dataItem.code,levelCode+1);
       	        			}
       	        		})
