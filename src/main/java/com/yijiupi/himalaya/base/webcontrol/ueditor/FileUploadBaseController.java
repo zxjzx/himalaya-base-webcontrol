@@ -4,13 +4,8 @@
 
 package com.yijiupi.himalaya.base.webcontrol.ueditor;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.yijiupi.himalaya.base.exception.DataValidateException;
 import com.yijiupi.himalaya.base.webcontrol.entity.FileInfoRO;
 import com.yijiupi.himalaya.base.webcontrol.pagemodel.BaseResult;
 import com.yijiupi.himalaya.base.webcontrol.pagemodel.ROResult;
@@ -19,6 +14,11 @@ import com.yijiupi.himalaya.basic.file.domain.PicCategory;
 import com.yijiupi.himalaya.basic.file.dto.FileInfoDTO;
 import com.yijiupi.himalaya.basic.file.service.IFileService;
 import com.yijiupi.himalaya.basic.file.utility.FileUpdateHelper;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
@@ -44,7 +44,9 @@ public class FileUploadBaseController {
 	 */
 	@RequestMapping(value = "/common/uploadFile")
 	public BaseResult uploadFile(@RequestParam(value="action",required = false) String action,@RequestParam(value="noCache",required = false) String noCache, MultipartFile image) {
-		
+		if (image == null) {
+			throw new DataValidateException("请选择要上传的文件.");
+		}
 		FileConfig fileConfig = iFileService.getFileConfig(PicCategory.Banner);
 		FileInfoDTO fileInfoDTO = FileUpdateHelper.uploadPicFile(image, "1", fileConfig);
 	    com.yijiupi.himalaya.basic.file.domain.FileInfo fileInfoModel = iFileService.saveFile(fileInfoDTO);
