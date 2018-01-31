@@ -1,3 +1,4 @@
+<!--页面上显示的画布-->
 <style>
 	.input-img{
 		display: inline-block;
@@ -32,16 +33,24 @@
 	}
 </style>
 
-<div class="show-img" ng-repeat="item in canvasList">
+<div class="show-img" ng-repeat="item in canvasList track by $id(item)">
 	<div class="input-img">
 		<a href="javascript:;"> <input type="file" class="btn btn-warning btn-s" file-model="myFile{{$index}}"/>
 			<span class="btn btn-success">选择图片</span>
 		</a>
 	</div>
 	<button class="btn btn-primary" ng-if="item.showImage" ng-click="addCanvas($index)">添加</button>
-	<div ng-dblclick="editImg(item.image)" ng-show-canvas="{ file: item.image,height: 200}">
-
+	<!--未处理的照片-->
+	<div ng-if="!item.resultImg" >
+		<ng-show-canvas file-info="item.image" trigger-fun="editImg(item.image)"></ng-show-canvas>
 	</div>
+	<!--显示处理后的图片-->
+	<div>
+		<img ng-if="item.resultImg" ng-src="{{item.resultImg}}" alt="显示处理后的图片">
+	</div>
+
+
+
 
 </div>
 <div>
