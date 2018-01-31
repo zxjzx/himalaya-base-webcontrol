@@ -233,9 +233,12 @@
 
                     var imageInfo;//原图片信息
                     var reduceScale;//缩小倍数-为了防止过大的图片超出页面范围，因此缩小预览
-                    var backgroundImage;
 
-                    var orinImgWidth,orinImgHeight,orinImgScale;
+                    var orinImgWidth,orinImgHeight,orinImgScale;//原始图片的宽度和高度和比例
+                    var preImgWidth,preImgHeight;//预览原始的宽度
+                    var changeWidth,changeHeight;//变化中的宽度，高度
+
+
                     function onLoadImage() {
                         //原始图片的大小
                         var aimW = 800;
@@ -266,8 +269,11 @@
 
                         reduceScale = this.width/width;//原始图片/预览图片 = 缩小倍数
 
+                        preImgWidth = changeWidth = width;
+                        preImgHeight = changeHeight = height;
+
                         imageInfo = this;
-                        backgroundImage = new zrender.Image({
+                        var backgroundImage = new zrender.Image({
                             position: [0,0],
                             scale: [1, 1],//缩放比例
                             style: {
@@ -284,7 +290,7 @@
                         getImgCut();//初次加载时默认执行的截取图片操作
                     }
 
-
+                    // 遮罩层
                     var circle = new zrender.Rect({
                         shape: {
                             x: 0,
@@ -309,28 +315,43 @@
                         getImgCut();
                     });
 
+                    //鼠标滑动-放大缩小图片
                     zr.on('mousewheel',function (e) {
-
                         //e.wheelDelta:鼠标向上滚动为1,下为-1
                         var num = 20;
-                        orinImgWidth -= num*e.wheelDelta;
-                        orinImgHeight -= num/orinImgScale*e.wheelDelta;
-                        var backCanvas = element.find('canvas')[0];
-                        backCanvas.getContext('2d').clearRect(0,0,800,600);
-                        backCanvas.getContext('2d').drawImage(imageInfo,0,0,img.width,img.height,0,0,orinImgWidth,orinImgHeight);
+                        //源图片的宽高比例
+                        changeWidth -= num*e.wheelDelta;
+                        changeHeight -= num/reduceScale*e.wheelDelta;
+
+                        var changeImage = new zrender.Image({
+                            position: [0,0],
+                            scale: [1, 1],//缩放比例
+                            style: {
+                                x: 0,
+                                y: 0,
+                                image: imageInfo,
+                                width: changeWidth,
+                                height: changeHeight
+                            },
+                            draggable: false
+                        });
+                        var group = new zrender.Group();
+                        group.add(changeImage);
+                        group.add(circle);
+                        zr.clear();
+                        zr.add(group);
+                        getImgCut();
                     });
-
-
-
 
 
                     //进行裁剪具体操作
                     function getImgCut() {
                         //为什么要*reduceScale，因为在页面预览的图片的size已经经过扩大或者缩小，不是原始图片的宽高，若要得到选中的区域，必须得到源图片的真实宽高才能得到正确的预览图
-                        var sx = circle.position[0]*reduceScale;//开始剪切的 x 坐标位置
-                        var sy = circle.position[1]*reduceScale;
-                        var sw = scope.imgSize[0]*reduceScale;//被剪切图像的宽度
-                        var sh = scope.imgSize[1]*reduceScale;
+                        var changeScale = preImgWidth/changeWidth;//变化中变化的比例
+                        var sx = circle.position[0]*reduceScale*changeScale;//开始剪切的 x 坐标位置
+                        var sy = circle.position[1]*reduceScale*changeScale;
+                        var sw = scope.imgSize[0]*reduceScale*changeScale;//被剪切图像的宽度
+                        var sh = scope.imgSize[1]*reduceScale*changeScale;
 
                         var cw = scope.imgSize[0];//要使用的图像的宽度。（伸展或缩小图像）
                         var ch = scope.imgSize[1];
