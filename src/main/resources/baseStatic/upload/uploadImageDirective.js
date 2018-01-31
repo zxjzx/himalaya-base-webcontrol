@@ -321,7 +321,7 @@
                         var num = 20;
                         //源图片的宽高比例
                         changeWidth -= num*e.wheelDelta;
-                        changeHeight -= num/reduceScale*e.wheelDelta;
+                        changeHeight -= num/orinImgScale*e.wheelDelta;
 
                         var changeImage = new zrender.Image({
                             position: [0,0],
