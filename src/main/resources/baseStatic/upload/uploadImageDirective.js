@@ -238,6 +238,7 @@
                     var preImgWidth,preImgHeight;//预览原始的宽度
                     var changeWidth,changeHeight;//变化中的宽度，高度
 
+                    var backgroundImage;
 
                     function onLoadImage() {
                         //原始图片的大小
@@ -273,7 +274,7 @@
                         preImgHeight = changeHeight = height;
 
                         imageInfo = this;
-                        var backgroundImage = new zrender.Image({
+                        backgroundImage = new zrender.Image({
                             position: [0,0],
                             scale: [1, 1],//缩放比例
                             style: {
@@ -283,7 +284,7 @@
                                 width: width,
                                 height: height
                             },
-                            draggable: false
+                            draggable: true
                         });
                         zr.add(backgroundImage);
                         zr.add(circle);
@@ -316,6 +317,8 @@
                     });
 
                     //鼠标滑动-放大缩小图片
+                    var changeImage;
+                    var changeImgX,changeImgY;
                     zr.on('mousewheel',function (e) {
                         //e.wheelDelta:鼠标向上滚动为1,下为-1
                         var num = 20;
@@ -323,7 +326,7 @@
                         changeWidth -= num*e.wheelDelta;
                         changeHeight -= num/orinImgScale*e.wheelDelta;
 
-                        var changeImage = new zrender.Image({
+                        changeImage = new zrender.Image({
                             position: [0,0],
                             scale: [1, 1],//缩放比例
                             style: {
@@ -333,7 +336,7 @@
                                 width: changeWidth,
                                 height: changeHeight
                             },
-                            draggable: false
+                            draggable: true
                         });
                         var group = new zrender.Group();
                         group.add(changeImage);
@@ -343,6 +346,10 @@
                         getImgCut();
                     });
 
+                    //图片移动
+                    zr.on('mouseup',function () {
+                        getImgCut();
+                    });
 
                     //进行裁剪具体操作
                     function getImgCut() {
@@ -355,6 +362,12 @@
 
                         var cw = scope.imgSize[0];//要使用的图像的宽度。（伸展或缩小图像）
                         var ch = scope.imgSize[1];
+
+
+                        if(backgroundImage){
+                            sx = circle.position[0]*reduceScale*changeScale-backgroundImage.position[0]*reduceScale*changeScale;//开始剪切的 x 坐标位置
+                            sy = circle.position[1]*reduceScale*changeScale-backgroundImage.position[1]*reduceScale*changeScale;
+                        }
 
                         //新建canvas显示裁剪后的图片
                         var canvas = element.find('canvas');
@@ -371,10 +384,6 @@
                             // canvas[1].getContext('2d').clearRect(0,0,cw,ch);
                         };
                     }
-
-
-
-
                 }
             }
         }])
