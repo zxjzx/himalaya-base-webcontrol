@@ -318,7 +318,7 @@
 
                     //鼠标滑动-放大缩小图片
                     var changeImage;
-                    var changeImgX,changeImgY;
+                    var dragNum = 0;////缩放图片后的第几次移动
                     zr.on('mousewheel',function (e) {
                         //e.wheelDelta:鼠标向上滚动为1,下为-1
                         var num = 20;
@@ -326,48 +326,104 @@
                         changeWidth -= num*e.wheelDelta;
                         changeHeight -= num/orinImgScale*e.wheelDelta;
 
-                        changeImage = new zrender.Image({
-                            position: [0,0],
-                            scale: [1, 1],//缩放比例
-                            style: {
-                                x: 0,
-                                y: 0,
-                                image: imageInfo,
-                                width: changeWidth,
-                                height: changeHeight
-                            },
-                            draggable: true
-                        });
+                        if(newImg){
+                            changeImage = new zrender.Image({
+                                position: [0,0],
+                                scale: [1, 1],//缩放比例
+                                style: {
+                                    x: newImg.style.x?newImg.style.x:0,
+                                    y: newImg.style.y?newImg.style.y:0,
+                                    image: imageInfo,
+                                    width: changeWidth,
+                                    height: changeHeight
+                                },
+                                draggable: true
+                            });
+                        }else{
+                            changeImage = new zrender.Image({
+                                position: [0,0],
+                                scale: [1, 1],//缩放比例
+                                style: {
+                                    x: 0,
+                                    y: 0,
+                                    image: imageInfo,
+                                    width: changeWidth,
+                                    height: changeHeight
+                                },
+                                draggable: true
+                            });
+                        }
+
                         var group = new zrender.Group();
                         group.add(changeImage);
                         group.add(circle);
                         zr.clear();
                         zr.add(group);
                         getImgCut();
+                        dragNum = 0;
+
                     });
 
-                    //图片移动
+                    var newImg;
+
+                    //图层移动
+                    var poX=0,poY=0;//图片的坐标/位置
                     zr.on('mouseup',function () {
                         getImgCut();
+
+                        if(!changeImage){
+                            return;
+                        }
+                        dragNum++;
+                        if(dragNum == 1){//第一次拖拽的时候的位置
+                            poX=changeImage.position[0];
+                            poY=changeImage.position[1];
+                            if(newImg){
+                                poX=newImg.position[0]+newImg.style.x+changeImage.position[0];
+                                poY=newImg.position[1]+newImg.style.y+changeImage.position[1];
+                            }
+                        }else{
+                            poX=newImg.position[0]+newImg.style.x;
+                            poY=newImg.position[1]+newImg.style.y;
+                        }
+
+                        newImg = new zrender.Image({
+                            position: [0,0],
+                            scale: [1, 1],//缩放比例
+                            style: {
+                                x: poX,
+                                y: poY,
+                                image: imageInfo,
+                                width: changeImage.style.width,
+                                height: changeImage.style.height
+                            },
+                            draggable: true,
+                            culling:true
+                        });
+
+                        console.log(newImg.position);
+
+                        var group = new zrender.Group();
+                        group.add(newImg);
+                        group.add(circle);
+                        zr.clear();
+                        zr.add(group);
+                        getImgCut();
+
                     });
 
                     //进行裁剪具体操作
                     function getImgCut() {
                         //为什么要*reduceScale，因为在页面预览的图片的size已经经过扩大或者缩小，不是原始图片的宽高，若要得到选中的区域，必须得到源图片的真实宽高才能得到正确的预览图
                         var changeScale = preImgWidth/changeWidth;//变化中变化的比例
-                        var sx = circle.position[0]*reduceScale*changeScale;//开始剪切的 x 坐标位置
-                        var sy = circle.position[1]*reduceScale*changeScale;
+                        // var poX,poY;//图片的位置
+                        var sx = circle.position[0]*reduceScale*changeScale-poX*reduceScale*changeScale;//开始剪切的 x 坐标位置
+                        var sy = circle.position[1]*reduceScale*changeScale-poY*reduceScale*changeScale;
                         var sw = scope.imgSize[0]*reduceScale*changeScale;//被剪切图像的宽度
                         var sh = scope.imgSize[1]*reduceScale*changeScale;
 
                         var cw = scope.imgSize[0];//要使用的图像的宽度。（伸展或缩小图像）
                         var ch = scope.imgSize[1];
-
-
-                        if(backgroundImage){
-                            sx = circle.position[0]*reduceScale*changeScale-backgroundImage.position[0]*reduceScale*changeScale;//开始剪切的 x 坐标位置
-                            sy = circle.position[1]*reduceScale*changeScale-backgroundImage.position[1]*reduceScale*changeScale;
-                        }
 
                         //新建canvas显示裁剪后的图片
                         var canvas = element.find('canvas');
