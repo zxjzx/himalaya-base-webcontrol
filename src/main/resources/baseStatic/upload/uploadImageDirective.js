@@ -52,9 +52,7 @@
                         dataList.forEach(function (item) {
                             image.append('files',item.image);
                         });
-
                         // image.append('files',fileBlob,'image.png')
-
                         $http({
                             method:"post",    　　// 可以是get,post,put, delete,head,jsonp;常使用的是get,post
                             url:'basewebcontrol/upload/common/uploadFiles/'+bussinessId+'/0/'+userId, 　　  //请求路径
@@ -63,7 +61,9 @@
                             data:image　　　　　　//通常在发送post请求时使用。
                         }).success(function(response){
                             //返回上传成功图片的信息
-                            console.log(response.datas.dataList);
+                            if(response.result === 'success'){
+                                $scope.$emit('responseImgList', response.datas.dataList);   //子向父传
+                            }
                         });
                     };
 
