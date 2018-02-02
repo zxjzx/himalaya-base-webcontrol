@@ -18,7 +18,7 @@
                     bussinessId:'=',//上传图片所属业务id
                     imgSize:'='//图片尺寸
                 },
-                templateUrl:'../baseStatic/upload/preViewImage.html',
+                templateUrl:'../baseStatic/upload/html/preViewImage.html',
                 controller:['$scope','getUserInfo','$http','$modal',function($scope,getUserInfo,$http,$modal){
 
                     // 图片长宽尺寸 $scope.imgWidth $scope.imgHeight
@@ -75,7 +75,7 @@
                     $scope.editImg = function (item) {
                         var index = this.$index;
                         $modal.open({
-                            templateUrl: '../baseStatic/upload/editImageModal.html',
+                            templateUrl: '../baseStatic/upload/html/editImageModal.html',
                             controller: editImageModalController,
                             size: 'lg',
                             resolve: {
@@ -138,7 +138,8 @@
                 link:function (scope, element, attrs) {
                     element.bind('change',function (event) {/*页面加载时执行*/
                         var imgFile = this.files[0];
-                        scope.getFile(imgFile,scope.$index)
+                        var index = scope.$index ? scope.$index : 0;
+                        scope.getFile(imgFile,index);
                     });
                 }
             };
@@ -175,12 +176,15 @@
                         img.src = event.target.result;
                     }
                     function onLoadImage() {
+                        var blob = dataURLtoBlob(this.src);
                         //this.width,this.height 图片的原始尺寸-宽度和高度
                         if((imgWidth && (imgWidth != this.width)) || (imgHeight && imgHeight != this.height)) {
-                            console.log("您上传的图片尺寸为"+this.width+"X"+this.height+";此处图片格式要求为"+imgWidth+'X'+imgHeight);
+                            console.log("您上传的图片size为"+parseInt(blob.size/1024)+"k;尺寸为"+this.width+"X"+this.height+";此处图片格式要求为"+imgWidth+'X'+imgHeight);
                             scope.triggerFun();
                             return;
                         }
+
+
                         var width = params.width || this.width / this.height * params.height;
                         var height = params.height || this.height / this.width * params.width;
 
@@ -198,7 +202,16 @@
                         canvas[0].getContext('2d').clearRect(this, 0, 0, width, height);
                         canvas[0].getContext('2d').drawImage(this, 0, 0, width, height);
                     }
-                },
+
+                    function dataURLtoBlob(dataurl) {
+                        var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+                            bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+                        while(n--){
+                            u8arr[n] = bstr.charCodeAt(n);
+                        }
+                        return new Blob([u8arr], {type:mime});
+                    }
+                }
 
             }
         }])
@@ -213,32 +226,29 @@
                     resultImg:'='//返回的已处理（裁剪）图片
                 },
                 templateUrl:'../baseStatic/upload/html/editDiv.html',
-                controller:['$scope',function ($scope) {
-                }],
                 link : function (scope,element,attribute,ctrl) {
-
-                    //新建canvas
+                    //新建canvas-用于预览实时操作的图片
                     var newCanvas =  document.createElement("canvas");
                     angular.element("#mydiv").append(angular.element(newCanvas));
 
+                    //初始化zrender
                     var zr = zrender.init(newCanvas,{width:800,height:500});
-                    var img = new Image();
+
+                    // 初次打开弹窗时预览图片
+                    var initImg = new Image();//源图片信息
                     var reader = new FileReader();
                     reader.onload = function (event) {
-                        img.onload = onLoadImage;
-                        img.src = event.target.result;
+                        initImg.onload = onLoadImage;
+                        initImg.src = event.target.result;
                     };
                     reader.readAsDataURL(scope.imgInfo);
 
 
-                    var imageInfo;//原图片信息
                     var reduceScale;//缩小倍数-为了防止过大的图片超出页面范围，因此缩小预览
 
                     var orinImgWidth,orinImgHeight,orinImgScale;//原始图片的宽度和高度和比例
-                    var preImgWidth,preImgHeight;//预览原始的宽度
-                    var changeWidth,changeHeight;//变化中的宽度，高度
-
-                    var backgroundImage;
+                    var preImgWidth,preImgHeight;//预览大图的宽度
+                    var changeWidth,changeHeight;//图片放大缩小变化中的宽度，高度
 
                     function onLoadImage() {
                         //原始图片的大小
@@ -273,8 +283,7 @@
                         preImgWidth = changeWidth = width;
                         preImgHeight = changeHeight = height;
 
-                        imageInfo = this;
-                        backgroundImage = new zrender.Image({
+                        var backgroundImage = new zrender.Image({
                             position: [0,0],
                             scale: [1, 1],//缩放比例
                             style: {
@@ -322,7 +331,7 @@
                     zr.on('mousewheel',function (e) {
                         //e.wheelDelta:鼠标向上滚动为1,下为-1
                         var num = 20;
-                        //源图片的宽高比例
+                        //扩大缩小时图片的宽高
                         changeWidth -= num*e.wheelDelta;
                         changeHeight -= num/orinImgScale*e.wheelDelta;
 
@@ -333,7 +342,7 @@
                                 style: {
                                     x: newImg.style.x?newImg.style.x:0,
                                     y: newImg.style.y?newImg.style.y:0,
-                                    image: imageInfo,
+                                    image: initImg,
                                     width: changeWidth,
                                     height: changeHeight
                                 },
@@ -346,7 +355,7 @@
                                 style: {
                                     x: 0,
                                     y: 0,
-                                    image: imageInfo,
+                                    image: initImg,
                                     width: changeWidth,
                                     height: changeHeight
                                 },
@@ -354,23 +363,89 @@
                             });
                         }
 
-                        var group = new zrender.Group();
+                    var group = new zrender.Group();
                         group.add(changeImage);
                         group.add(circle);
+                        textList.forEach(function (item) {
+                            group.add(item);
+                        });
                         zr.clear();
                         zr.add(group);
                         getImgCut();
                         dragNum = 0;
-
                     });
 
-                    var newImg;
 
+                    //添加操作
+                    var text;
+                    function addText(){
+                        //初始化新增文字
+                        text = new zrender.Text({
+                            position:[0,0],
+                            style:{
+                                text:'添加文字',
+                                fontSize: 20,//默认20
+                                textFill:"#e74e4d"
+                            },
+                            draggable: true
+                        });
+                    }
+
+
+                    //点击添加文字
+
+                    var addOperateFlag = false;//判断是否已经能添加文字
+                    var textList = [];//文字列表，用于存放多个文字
+
+                    scope.showAddText = function () {
+                        scope.showAddTextFlag = !scope.showAddTextFlag;
+                    };
+
+                    scope.textSizeList = [
+                        {size:10,name:'极小(10px)'},
+                        {size:12,name:'特小(12px)'},
+                        {size:14,name:'小(14px)'},
+                        {size:18,name:'中(18px)'},
+                        {size:24,name:'大(24px)'},
+                        {size:32,name:'特大(32px)'},
+                        {size:48,name:'极大(48px)'}
+                    ];
+
+
+                    scope.vo = {
+                        color:"#e74e4d",
+                        fontSize:18
+                    };
+                    //点击添加操作
+                    scope.addTextFun = function () {
+                        addText();//添加操作
+                        scope.addTextShow = true;//输入框显示
+                        if(!scope.vo.textContent){//如果输入框没有值,则不能进行添加操作
+                            return;
+                        }
+                        addOperateFlag = true;
+                        text.style.text=scope.vo.textContent;
+                        scope.vo.textContent = "";
+                        if(scope.vo.color){
+                            text.style.textFill = scope.vo.color;
+                        }
+                        if(scope.vo.fontSize){
+                            text.style.fontSize = scope.vo.fontSize;
+                        }
+
+                        var group = new zrender.Group();
+                        group.add(text);
+                        textList.push(text);
+                        zr.add(group);
+                        getImgCut();
+                    };
+
+
+                    var newImg;//缩放后拖拽的图片
                     //图层移动
                     var poX=0,poY=0;//图片的坐标/位置
                     zr.on('mouseup',function () {
                         getImgCut();
-
                         if(!changeImage){
                             return;
                         }
@@ -393,24 +468,25 @@
                             style: {
                                 x: poX,
                                 y: poY,
-                                image: imageInfo,
+                                image: initImg,
                                 width: changeImage.style.width,
                                 height: changeImage.style.height
                             },
-                            draggable: true,
-                            culling:true
+                            draggable: true
                         });
-
-                        console.log(newImg.position);
-
                         var group = new zrender.Group();
                         group.add(newImg);
                         group.add(circle);
+                        //点击添加文字按钮后才添加文字
+                        if(addOperateFlag){
+                            group.add(text);
+                        }
                         zr.clear();
                         zr.add(group);
                         getImgCut();
 
                     });
+
 
                     //进行裁剪具体操作
                     function getImgCut() {
@@ -428,16 +504,35 @@
                         //新建canvas显示裁剪后的图片
                         var canvas = element.find('canvas');
 
+                        canvas[1].getContext('2d').clearRect(0, 0, sw, sh);
                         canvas[1].width=cw;
                         canvas[1].height=ch;
-                        canvas[1].getContext('2d').drawImage(imageInfo, sx, sy, sw, sh,0,0,cw,ch);
+                        canvas[1].getContext('2d').fillStyle = '#FFFFFF';//填充背景色颜色
+                        canvas[1].getContext('2d').fillRect(0, 0, cw, cw);
+                        canvas[1].getContext('2d').drawImage(initImg, sx, sy, sw, sh,0,0,cw,ch);
+
+                        // 开始绘制文字
+                        //字体大小
+                        textList.forEach(function (item) {
+                            var textX = item.position[0] - circle.position[0];
+                            var textY = item.position[1] - circle.position[1] + item.style.fontSize;
+                            // begin- 开始绘制文字
+                            //设置字体样式
+                            //fontSize
+                            var font= item.style.fontSize+'px '+'"微软雅黑"';
+                            canvas[1].getContext('2d').font = font;
+                            //设置字体填充颜色
+                            canvas[1].getContext('2d').fillStyle = item.style.textFill;
+                            //从坐标点(50,50)开始绘制文字
+                            canvas[1].getContext('2d').fillText(item.style.text,textX,textY);
+                        });
+                        //end
 
                         var image = new Image();
                         image.src = canvas[1].toDataURL("image/png");
                         image.onload = function () {
                             scope.resultImg = image.src;
                             scope.$apply();
-                            // canvas[1].getContext('2d').clearRect(0,0,cw,ch);
                         };
                     }
                 }

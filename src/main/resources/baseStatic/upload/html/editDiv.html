@@ -5,6 +5,24 @@
         width:800px;
         height: 500px;
     }
+    .img-text{
+        display: inline-block;
+    }
 </style>
+
+<div class="img-text" >
+    <button class="btn btn-primary btn-xs" ng-click="showAddText()">文字</button>
+</div>
+<div class="img-text">
+    <div ng-if="showAddTextFlag">
+        <input type="text" ng-model="vo.textContent">
+        <input type="color" ng-model="vo.color">
+        <select ng-model="vo.fontSize" ng-options="item.size as item.name for item in textSizeList"></select>
+        <button ng-click="addTextFun()">添加</button>
+    </div>
+</div>
+
+
 <div class="container-img" id="mydiv">
+
 </div>
