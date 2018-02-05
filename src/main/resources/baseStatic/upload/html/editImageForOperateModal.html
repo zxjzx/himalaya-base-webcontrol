@@ -1,4 +1,4 @@
-<!--弹窗-->
+<!--编辑图片弹窗页面-->
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal"
             aria-hidden="true" ng-click="cancel()">×</button>
@@ -8,7 +8,7 @@
     <div class="portlet-body form">
         <div style="width:800px;margin:0 auto;">
             <!--<div ng-show-canvas="{ file: imgInfo,height: 500}"></div>-->
-            <edit-img-direct img-info="imgInfo" img-size="imgSize" result-img="resultImg"></edit-img-direct>
+            <edit-img-direct origin-image-info="originImageInfo" limit-img-size="limitImgSize" result-img="resultImg"></edit-img-direct>
         </div>
     </div>
 </div>
