@@ -35,7 +35,7 @@
 
 <div class="show-img" ng-repeat="item in canvasList track by $id(item)">
 	<div class="input-img">
-		<a href="javascript:;"> <input type="file" class="btn btn-warning btn-s" file-model="myFile{{$index}}"/>
+		<a href="javascript:;"> <input type="file" class="btn btn-warning btn-s" file-change-model/>
 			<span class="btn btn-success">选择图片</span>
 		</a>
 	</div>
@@ -50,7 +50,7 @@
 	</div>
 </div>
 <div ng-if="isCanUploadOprate">
-	<button class="btn btn-success" type="button"  data-ng-click="getPicInfo()">提交图片</button>
+	<button class="btn btn-success" type="button"  data-ng-click="uploadAllImageFun()">提交图片</button>
 </div>
 
 

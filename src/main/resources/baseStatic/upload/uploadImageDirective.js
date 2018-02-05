@@ -1,14 +1,22 @@
-/*
+/**
 
-<upload-muti-image get-img-data="getImgData" img-amount="2" bussiness-id="id" ></upload-muti-image>
+ 使用教程：
+ 1、在首页导入"uploadImageDirective.js"和"zrender.min.js"文件
+ 2、在app.js中注入"uploadImageModule"
+ 3、在页面按照如下使用指令
 
-
-    */
+指令解释：
+<upload-muti-image limit-amount-img="2" bussiness-id="id" limit-img-size="[400,300]"
+response-img-list="responseImgList" upload-during-preview="true"></upload-muti-image>
+limit-amount-img：表示限制同时上传数量为2
+bussiness-id：业务id，可不传
+limit-img-size：图片尺寸
+responseImgList：图片上传成功到后台后返回的图片id等相关信息
+upload-during-preview：不传值则默认为true,表示是否在预览时，图片处理完成后立即上传,true:立即上传，false表示必须点击上传操作才能上传
+*/
 (function() {
     'use strict';
-
     angular.module('uploadImageModule', [])
-
         .directive('uploadMutiImage',[function(){
             return {
                 restrict:'AE',
@@ -21,11 +29,13 @@
                 templateUrl:'../baseStatic/upload/html/returnImageForView.html',
                 controller:['$scope','getUserInfo','$http','$modal',function($scope,getUserInfo,$http,$modal){
 
-                    // 图片长宽尺寸 $scope.imgWidth $scope.imgHeight
-                    $scope.canvasList = [{}];
-
                     $scope.limitImgSize = $scope.limitImgSize?$scope.limitImgSize:[400,300];//设置图片默认尺寸
                     $scope.uploadDuringPreview = $scope.uploadDuringPreview?$scope.uploadDuringPreview:true;//默认立即上传
+                    var userId = getUserInfo.userInfo().userId;//上传人id
+                    var bussinessId = $scope.bussinessId?$scope.bussinessId:null;//业务id，可以不传
+
+                    // 图片长宽尺寸 $scope.imgWidth $scope.imgHeight
+                    $scope.canvasList = [{}];//上传图片临时存储数组
 
                     //添加上传按钮
                     $scope.addCanvas = function(index){
@@ -33,9 +43,8 @@
                         $scope.canvasList[index].showImage = "";
                     };
 
-                    $scope.getImgData = {};
-                    //返回上传文件信息
-                    $scope.getFile = function(file,index){
+                    //点击打开图片-图片信息
+                    $scope.getImageFile = function(file,index){
                         //覆盖第index个
                         $scope.canvasList[index] = {image:file};
                         var len = $scope.canvasList.length;
@@ -48,18 +57,18 @@
                         $scope.$apply();
                     };
 
+                    //被触发上传操作
                     $scope.uploadImageFun = function () {
                         if($scope.uploadDuringPreview){
                             $scope.isCanUploadOprate = false;
-                            $scope.getPicInfo();//是否立即执行上传操作
+                            $scope.uploadAllImageFun();//是否立即执行上传操作
                         }
                     };
 
-                    var userId = getUserInfo.userInfo().userId;
-                    var bussinessId = $scope.bussinessId?$scope.bussinessId:null;//业务if，可以不传
 
-                    //上传到后台的操作
-                    $scope.getPicInfo = function(){
+
+                    //点击上传到后台的操作
+                    $scope.uploadAllImageFun = function(){
                         var image = new FormData();
                         //dataList需要上传到后台的数据
                         $scope.canvasList.forEach(function (item) {
@@ -147,14 +156,14 @@
 
 
     //点击上传操作
-        .directive('fileModel', function ($parse) {/*$parse是AngularJS的内置directive*/
+        .directive('fileChangeModel', function ($parse) {/*$parse是AngularJS的内置directive*/
             return {
                 restrict: 'A',/*限制该directive的声明方式 为Attribute*/
-                link:function (scope, element, attrs) {
+                link:function (scope, element) {
                     element.bind('change',function (event) {/*页面加载时执行*/
                         var imgFile = this.files[0];
                         var index = scope.$index ? scope.$index : 0;
-                        scope.getFile(imgFile,index);
+                        scope.getImageFile(imgFile,index);
                     });
                 }
             };
@@ -195,7 +204,7 @@
                         var blob = dataURLtoBlob(this.src);
                         //this.width,this.height 图片的原始尺寸-宽度和高度
                         if((imgWidth && (imgWidth != this.width)) || (imgHeight && imgHeight != this.height)) {
-                            console.log("您上传的图片size为"+parseInt(blob.size/1024)+"k;尺寸为"+this.width+"X"+this.height+";此处图片格式要求为"+imgWidth+'X'+imgHeight);
+                            //console.log("您上传的图片size为"+parseInt(blob.size/1024)+"k;尺寸为"+this.width+"X"+this.height+";此处图片格式要求为"+imgWidth+'X'+imgHeight);
                             scope.triggerFun();
                             return;
                         }
