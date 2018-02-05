@@ -1,55 +1,77 @@
-/*
+/**
 
-<upload-muti-image get-img-data="getImgData" img-amount="2" bussiness-id="id" ></upload-muti-image>
+ 使用教程：
+ 1、在首页导入"uploadImageDirective.js"和"zrender.min.js"文件
+ 2、在app.js中注入"uploadImageModule"
+ 3、在页面按照如下使用指令
 
-
-    */
+指令解释：
+<upload-muti-image limit-amount-img="2" bussiness-id="id" limit-img-size="[400,300]"
+response-img-list="responseImgList" upload-during-preview="true"></upload-muti-image>
+limit-amount-img：表示限制同时上传数量为2
+bussiness-id：业务id，可不传
+limit-img-size：图片尺寸
+responseImgList：图片上传成功到后台后返回的图片id等相关信息
+upload-during-preview：不传值则默认为true,表示是否在预览时，图片处理完成后立即上传,true:立即上传，false表示必须点击上传操作才能上传
+*/
 (function() {
     'use strict';
-
     angular.module('uploadImageModule', [])
-
         .directive('uploadMutiImage',[function(){
             return {
                 restrict:'AE',
                 scope:{
-                    getImgData:'=',//返回给页面关于图片的数据信息
-                    imgAmount:'@',//上传图片数量的限制
+                    limitAmountImg:'@',//上传图片数量的限制
                     bussinessId:'=',//上传图片所属业务id
-                    imgSize:'='//图片尺寸
+                    limitImgSize:'=',//图片尺寸限制
+                    uploadDuringPreview:'='//是否在预览时，图片处理完成后立即上传,true:立即上传，false表示必须点击上传操作才能上传
                 },
-                templateUrl:'../baseStatic/upload/html/preViewImage.html',
+                templateUrl:'../baseStatic/upload/html/returnImageForView.html',
                 controller:['$scope','getUserInfo','$http','$modal',function($scope,getUserInfo,$http,$modal){
 
+                    $scope.limitImgSize = $scope.limitImgSize?$scope.limitImgSize:[400,300];//设置图片默认尺寸
+                    $scope.uploadDuringPreview = $scope.uploadDuringPreview?$scope.uploadDuringPreview:true;//默认立即上传
+                    var userId = getUserInfo.userInfo().userId;//上传人id
+                    var bussinessId = $scope.bussinessId?$scope.bussinessId:null;//业务id，可以不传
+
                     // 图片长宽尺寸 $scope.imgWidth $scope.imgHeight
-                    $scope.canvasList = [{}];
-                    //添加
+                    $scope.canvasList = [{}];//上传图片临时存储数组
+
+                    //添加上传按钮
                     $scope.addCanvas = function(index){
                         $scope.canvasList.push({});
                         $scope.canvasList[index].showImage = "";
                     };
-                //返回文件
-                    $scope.getFile = function(file,index){
+
+                    //点击打开图片-图片信息
+                    $scope.getImageFile = function(file,index){
                         //覆盖第index个
                         $scope.canvasList[index] = {image:file};
                         var len = $scope.canvasList.length;
 
-                        if($scope.imgAmount != len){//限制上传图片数量
+                        if($scope.limitAmountImg != len){//限制上传图片数量
                             //使最后一个显示添加图片
                             $scope.canvasList[len-1].showImage = true;
                         }
-                        $scope.getImgData = $scope.canvasList;
+                        $scope.isCanUploadOprate = true;//是否显示上传按钮
                         $scope.$apply();
                     };
 
-                    var userId = getUserInfo.userInfo().userId;
-                    var bussinessId = $scope.bussinessId;
+                    //被触发上传操作
+                    $scope.uploadImageFun = function () {
+                        if($scope.uploadDuringPreview){
+                            $scope.isCanUploadOprate = false;
+                            $scope.uploadAllImageFun();//是否立即执行上传操作
+                        }
+                    };
 
-                    //上传到后台的操作
-                    $scope.getPicInfo = function(dataList){
+
+
+                    //点击上传到后台的操作
+                    $scope.uploadAllImageFun = function(){
                         var image = new FormData();
                         //dataList需要上传到后台的数据
-                        dataList.forEach(function (item) {
+                        $scope.canvasList.forEach(function (item) {
                             image.append('files',item.image);
                         });
                         // image.append('files',fileBlob,'image.png')
@@ -73,16 +95,19 @@
                      */
                     var fileBlob;
                     $scope.editImg = function (item) {
+                        $scope.isCanUploadOprate = false;//是否显示上传按钮
                         var index = this.$index;
+                        $scope.canvasList[index].image = null;
+
                         $modal.open({
-                            templateUrl: '../baseStatic/upload/html/editImageModal.html',
+                            templateUrl: '../baseStatic/upload/html/editImageForOperateModal.html',
                             controller: editImageModalController,
                             size: 'lg',
                             resolve: {
                                 requestResults: function () {
                                     return {
                                         item:item,
-                                        imgSize:$scope.imgSize//图片尺寸
+                                        limitImgSize:$scope.limitImgSize//图片尺寸
                                     };
                                 }
                             }
@@ -92,11 +117,10 @@
                                 if(fileBlob){
                                     $scope.canvasList[index].image = fileBlob;
                                     $scope.canvasList[index].resultImg = resultImg;
+                                    $scope.isCanUploadOprate = true;
+                                    $scope.uploadImageFun();//立即上传操作
                                 }
-
                             }
-
-
                         })
                     };
 
@@ -110,10 +134,10 @@
                         return new Blob([u8arr], {type:mime});
                     }
 
+                    //editImageModal.html的controller
                     function editImageModalController(requestResults,$scope,$modalInstance) {
-
-                        $scope.imgInfo = requestResults.item;
-                        $scope.imgSize = requestResults.imgSize;
+                        $scope.originImageInfo = requestResults.item;
+                        $scope.limitImgSize = requestResults.limitImgSize;
                         $scope.ok = function() {
                             //返回经过处理的图片
                             $modalInstance.close($scope.resultImg);
@@ -132,14 +156,14 @@
 
 
     //点击上传操作
-        .directive('fileModel', function ($parse) {/*$parse是AngularJS的内置directive*/
+        .directive('fileChangeModel', function ($parse) {/*$parse是AngularJS的内置directive*/
             return {
                 restrict: 'A',/*限制该directive的声明方式 为Attribute*/
-                link:function (scope, element, attrs) {
+                link:function (scope, element) {
                     element.bind('change',function (event) {/*页面加载时执行*/
                         var imgFile = this.files[0];
                         var index = scope.$index ? scope.$index : 0;
-                        scope.getFile(imgFile,index);
+                        scope.getImageFile(imgFile,index);
                     });
                 }
             };
@@ -150,15 +174,16 @@
                 restrict: 'AE',
                 scope:{
                     triggerFun:'&',//不满足格式要求的图片触发函数
-                    fileInfo:'='
+                    uploadImageFun:'&',//上传到后台触发函数
+                    imageFileInfo:'='//源图片
                 },
                 template: '<canvas/>',
-                link: function(scope, element, attributes) {
+                link: function(scope, element) {
                     //图片要求尺寸
                     var imgWidth = 400;
                     var imgHeight = 300;
 
-                    var params = scope.fileInfo;
+                    var params = scope.imageFileInfo;
 
                     if(!params){
                         return;
@@ -179,11 +204,10 @@
                         var blob = dataURLtoBlob(this.src);
                         //this.width,this.height 图片的原始尺寸-宽度和高度
                         if((imgWidth && (imgWidth != this.width)) || (imgHeight && imgHeight != this.height)) {
-                            console.log("您上传的图片size为"+parseInt(blob.size/1024)+"k;尺寸为"+this.width+"X"+this.height+";此处图片格式要求为"+imgWidth+'X'+imgHeight);
+                            //console.log("您上传的图片size为"+parseInt(blob.size/1024)+"k;尺寸为"+this.width+"X"+this.height+";此处图片格式要求为"+imgWidth+'X'+imgHeight);
                             scope.triggerFun();
                             return;
                         }
-
 
                         var width = params.width || this.width / this.height * params.height;
                         var height = params.height || this.height / this.width * params.width;
@@ -201,6 +225,7 @@
                         canvas.attr({ width: width, height: height });
                         canvas[0].getContext('2d').clearRect(this, 0, 0, width, height);
                         canvas[0].getContext('2d').drawImage(this, 0, 0, width, height);
+                        scope.uploadImageFun();
                     }
 
                     function dataURLtoBlob(dataurl) {
@@ -221,11 +246,11 @@
             return {
                 restrict:'AE',
                 scope:{
-                    imgInfo:'=',//点击上传时页面传递过来的原始图片信息
-                    imgSize:'=',//目标尺寸，即阴影部分的宽高
+                    originImageInfo:'=',//点击上传时页面传递过来的原始图片信息
+                    limitImgSize:'=',//目标尺寸，即阴影部分的宽高
                     resultImg:'='//返回的已处理（裁剪）图片
                 },
-                templateUrl:'../baseStatic/upload/html/editDiv.html',
+                templateUrl:'../baseStatic/upload/html/editImageForViewDiv.html',
                 link : function (scope,element,attribute,ctrl) {
                     //新建canvas-用于预览实时操作的图片
                     var newCanvas =  document.createElement("canvas");
@@ -241,7 +266,7 @@
                         initImg.onload = onLoadImage;
                         initImg.src = event.target.result;
                     };
-                    reader.readAsDataURL(scope.imgInfo);
+                    reader.readAsDataURL(scope.originImageInfo);
 
 
                     var reduceScale;//缩小倍数-为了防止过大的图片超出页面范围，因此缩小预览
@@ -305,8 +330,8 @@
                         shape: {
                             x: 0,
                             y: 0,
-                            width: scope.imgSize[0],
-                            height:scope.imgSize[1]
+                            width: scope.limitImgSize[0],
+                            height:scope.limitImgSize[1]
                         },
                         style: {
                             fill: '#ccc',
@@ -495,11 +520,11 @@
                         // var poX,poY;//图片的位置
                         var sx = circle.position[0]*reduceScale*changeScale-poX*reduceScale*changeScale;//开始剪切的 x 坐标位置
                         var sy = circle.position[1]*reduceScale*changeScale-poY*reduceScale*changeScale;
-                        var sw = scope.imgSize[0]*reduceScale*changeScale;//被剪切图像的宽度
-                        var sh = scope.imgSize[1]*reduceScale*changeScale;
+                        var sw = scope.limitImgSize[0]*reduceScale*changeScale;//被剪切图像的宽度
+                        var sh = scope.limitImgSize[1]*reduceScale*changeScale;
 
-                        var cw = scope.imgSize[0];//要使用的图像的宽度。（伸展或缩小图像）
-                        var ch = scope.imgSize[1];
+                        var cw = scope.limitImgSize[0];//要使用的图像的宽度。（伸展或缩小图像）
+                        var ch = scope.limitImgSize[1];
 
                         //新建canvas显示裁剪后的图片
                         var canvas = element.find('canvas');
