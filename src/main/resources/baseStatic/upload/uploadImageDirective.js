@@ -591,13 +591,10 @@ upload-during-preview：不传值则默认为true,表示是否在预览时，图
                             var textWidth = textList[i]._rect.width;
                             var textHeight = textList[i].style.fontSize;
                             if((triggerLeft-position[0]>0) && ((triggerLeft-position[0])<textWidth) && (triggerTop-position[1]>0) && ((triggerTop-position[1])<textHeight)){
-                                console.log("移动的第"+i+"个");
                                 selectTextNum = i;
                                 num++;
                                 if(num>1){
-                                    overlapFlag = true;
-                                    console.log("重叠了，取哪一个呢"+i)
-
+                                    overlapFlag = true;//重叠时，默认取最后添加的，即最高层
                                 }
                             }
                         }
@@ -605,7 +602,6 @@ upload-during-preview：不传值则默认为true,表示是否在预览时，图
 
 
                     document.onkeydown = function (event) {
-                        console.log(event.keyCode == 8 || event.keyCode == 46);
                         if(event.keyCode == 8 || event.keyCode == 46){
                             if(selectTextNum == undefined){
                                 return;
