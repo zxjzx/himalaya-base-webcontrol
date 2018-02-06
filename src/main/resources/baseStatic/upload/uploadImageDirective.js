@@ -368,7 +368,8 @@ identify-image:标识哪一张图片,便于同一个页面多次调用该指令�
 
 
                     //图层移动
-                    var selectTextNum;
+                    var selectTextNum;//表示第几个文字层
+                    var smallIconSelectNum;//表示第几张小图片
                     var poX=0,poY=0;//图片的坐标/位置
                     zr.on('mouseup',function (event) {
 
@@ -580,6 +581,7 @@ identify-image:标识哪一张图片,便于同一个页面多次调用该指令�
                         getImgCut();
                     };
 
+
                     //双击后可以编辑
                     zr.on('dblclick',function (event) {
                         //如何获取拖动的文字对象
@@ -589,45 +591,72 @@ identify-image:标识哪一张图片,便于同一个页面多次调用该指令�
 
                         // 鼠标在文字的移动范围内
                         var overlapFlag = false;//重叠
-                        var num = 0;
+                        var textNum = 0;
                         for(var i=0;i<textList.length;i++){
-                            var position = textList[i].position;
+                            var textPosition = textList[i].position;
                             if(!textList[i]._rect){
                                 return;
                             }
                             var textWidth = textList[i]._rect.width;
                             var textHeight = textList[i].style.fontSize;
-                            if((triggerLeft-position[0]>0) && ((triggerLeft-position[0])<textWidth) && (triggerTop-position[1]>0) && ((triggerTop-position[1])<textHeight)){
+                            if((triggerLeft-textPosition[0]>0) && ((triggerLeft-textPosition[0])<textWidth) && (triggerTop-textPosition[1]>0) && ((triggerTop-textPosition[1])<textHeight)){
                                 selectTextNum = i;
-                                num++;
-                                if(num>1){
+                                textNum++;
+                                if(textNum>1){
                                     overlapFlag = true;//重叠时，默认取最后添加的，即最高层
                                 }
                             }
                         }
+
+
+
+                        var smallIconNum = 0;
+                        for(var i=0;i<smallIconList.length;i++){
+
+                            var smallIconPosition = smallIconList[i].position;
+                            var smallIconWidth = smallIconList[i]._image.width;
+                            var smallIconHeight = smallIconList[i]._image.height;
+
+                            if((triggerLeft-smallIconPosition[0]>0) && ((triggerLeft-smallIconPosition[0])<smallIconWidth) && (triggerTop-smallIconPosition[1]>0) && ((triggerTop-smallIconPosition[1])<smallIconHeight)){
+                                smallIconSelectNum = i;
+                                smallIconNum++;
+                                if(smallIconNum>1){
+                                    overlapFlag = true;//重叠时，默认取最后添加的，即最高层
+                                }
+                            }
+
+                        }
                     });
 
 
+
+
+                    function deleteLayer() {
+                        var group = new zrender.Group();
+                        group.add(temporarySaveImageList.backgroundImage);
+                        group.add(circle);
+                        textList.forEach(function (item) {
+                            group.add(item);
+                        });
+                        smallIconList.forEach(function (item) {
+                            group.add(item);
+                        });
+                        zr.clear();
+                        zr.add(group);
+                        getImgCut();
+                    }
                     //按下删除按钮
                     document.onkeydown = function (event) {
                         if(event.keyCode == 8 || event.keyCode == 46){
-                            if(selectTextNum == undefined){
-                                return;
+                            if(selectTextNum != undefined){
+                                textList.splice(selectTextNum,1);
+                                deleteLayer();
                             }
-                            textList.splice(selectTextNum,1);
-                            var group = new zrender.Group();
-                            group.add(temporarySaveImageList.backgroundImage);
-                            group.add(circle);
-                            textList.forEach(function (item) {
-                                group.add(item);
-                            });
-                            smallIconList.forEach(function (item) {
-                                group.add(item);
-                            });
-                            zr.clear();
-                            zr.add(group);
-                            getImgCut();
 
+                            if(smallIconSelectNum != undefined){
+                                smallIconList.splice(smallIconSelectNum,1);
+                                deleteLayer();
+                            }
                         }
                     };
 
