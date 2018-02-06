@@ -1,18 +1,19 @@
 /**
-
  使用教程：
  1、在首页导入"uploadImageDirective.js"和"zrender.min.js"文件
  2、在app.js中注入"uploadImageModule"
  3、在页面按照如下使用指令
 
 指令解释：
-<upload-muti-image limit-amount-img="2" bussiness-id="id" limit-img-size="[400,300]"
-response-img-list="responseImgList" upload-during-preview="true"></upload-muti-image>
+ <upload-muti-image limit-amount-img="1" bussiness-id="id" limit-img-size="[500,400]" identify-image="image2"
+ response-img-id-list="responseImgIdList" response-fun="responseFun()"></upload-muti-image>
+
 limit-amount-img：表示限制同时上传数量为2
 bussiness-id：业务id，可不传
 limit-img-size：图片尺寸
-responseImgList：图片上传成功到后台后返回的图片id等相关信息
+responseImgIdList：图片上传成功到后台后返回的图片id等相关信息
 upload-during-preview：不传值则默认为true,表示是否在预览时，图片处理完成后立即上传,true:立即上传，false表示必须点击上传操作才能上传
+identify-image:标识哪一张图片,便于同一个页面多次调用该指令时，用于区分图片id分别所属对象
 */
 (function() {
     'use strict';
@@ -24,10 +25,15 @@ upload-during-preview：不传值则默认为true,表示是否在预览时，图
                     limitAmountImg:'@',//上传图片数量的限制
                     bussinessId:'=',//上传图片所属业务id
                     limitImgSize:'=',//图片尺寸限制
+                    responseImgIdList:'=',
+                    responseFun:'&',
+                    identifyImage:'@',
                     uploadDuringPreview:'@'//是否在预览时，图片处理完成后立即上传,true:立即上传，false表示必须点击上传操作才能上传
                 },
                 templateUrl:'../baseStatic/upload/html/returnImageForView.html',
-                controller:['$scope','getUserInfo','$http','$modal',function($scope,getUserInfo,$http,$modal){
+                controller:function($scope,getUserInfo,$http,$modal){
+
+                    var identifyImage = $scope.identifyImage;
 
                     $scope.limitImgSize = $scope.limitImgSize?$scope.limitImgSize:[400,300];//设置图片默认尺寸
                     $scope.uploadDuringPreview = $scope.uploadDuringPreview?$scope.uploadDuringPreview:true;//默认立即上传
@@ -66,7 +72,6 @@ upload-during-preview：不传值则默认为true,表示是否在预览时，图
                     };
 
 
-
                     //点击上传到后台的操作
                     $scope.uploadAllImageFun = function(){
                         var image = new FormData();
@@ -84,7 +89,10 @@ upload-during-preview：不传值则默认为true,表示是否在预览时，图
                         }).success(function(response){
                             //返回上传成功图片的信息
                             if(response.result === 'success'){
-                                $scope.$emit('responseImgList', response.datas.dataList);   //子向父传
+                                response.datas.dataList.forEach(function (t) {
+                                    $scope.responseImgIdList[identifyImage] = t;
+                                });
+                                $scope.responseFun();//成功返回imgid后触发函数
                             }
                         });
                     };
@@ -149,8 +157,7 @@ upload-during-preview：不传值则默认为true,表示是否在预览时，图
                         };
                     }
 
-
-                }]
+                }
             }
         }])
 
@@ -601,6 +608,7 @@ upload-during-preview：不传值则默认为true,表示是否在预览时，图
                     });
 
 
+                    //按下删除按钮
                     document.onkeydown = function (event) {
                         if(event.keyCode == 8 || event.keyCode == 46){
                             if(selectTextNum == undefined){
@@ -737,7 +745,6 @@ upload-during-preview：不传值则默认为true,表示是否在预览时，图
                         };
                     }
                     // end-裁剪等操作层
-
 
 
                     //end
