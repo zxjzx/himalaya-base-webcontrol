@@ -28,7 +28,9 @@ identify-image:标识哪一张图片,便于同一个页面多次调用该指令�
                     responseImgIdList:'=',
                     responseFun:'&',
                     identifyImage:'@',
-                    uploadDuringPreview:'@'//是否在预览时，图片处理完成后立即上传,true:立即上传，false表示必须点击上传操作才能上传
+                    uploadDuringPreview:'@',//是否在预览时，图片处理完成后立即上传,true:立即上传，false表示必须点击上传操作才能上传
+                    existImageUrl:'=',//已经存在的单个图片url
+                    existImageUrlList:'='//已经存在的图片url,List
                 },
                 templateUrl:'../baseStatic/upload/html/returnImageForView.html',
                 controller:function($scope,getUserInfo,$http,$modal){
@@ -42,6 +44,10 @@ identify-image:标识哪一张图片,便于同一个页面多次调用该指令�
 
                     // 图片长宽尺寸 $scope.imgWidth $scope.imgHeight
                     $scope.canvasList = [{}];//上传图片临时存储数组
+
+                    if($scope.existImageUrl){
+                        $scope.canvasList[0].resultImg = $scope.existImageUrl;
+                    }
 
                     //添加上传按钮
                     $scope.addCanvas = function(index){
