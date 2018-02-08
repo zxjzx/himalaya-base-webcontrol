@@ -77,5 +77,15 @@ public class FileUploaderBaseController {
 		}
 	}
 
+	/**
+	 * 删除图片信息
+	 * @param picId 图片信息id
+	 * @return
+	 */
+	@RequestMapping(value = "/common/deletePic/{picId}", method = RequestMethod.POST)
+	public BaseResult deletePic(@PathVariable("picId") Integer picId) {
+		iFileApiService.deletePic(picId);
+		return BaseResult.getSuccessResult();
+	}
 
 }
