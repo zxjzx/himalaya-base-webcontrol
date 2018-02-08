@@ -152,7 +152,7 @@ identify-image:标识哪一张图片,便于同一个页面多次调用该指令�
                     function editImageModalController(requestResults,$scope,$modalInstance) {
                         $scope.originImageInfo = requestResults.item;
                         $scope.limitImgSize = requestResults.limitImgSize;
-                        $scope.ok = function() {
+                        $scope.handleImg = function() {
                             //返回经过处理的图片
                             $modalInstance.close($scope.resultImg);
                         };
@@ -161,6 +161,15 @@ identify-image:标识哪一张图片,便于同一个页面多次调用该指令�
                             // 跳转到列表页面
                             $modalInstance.dismiss('cancel');
                         };
+
+                        $scope.uploadOriginImg = function () {
+                            // 上传原图
+                            var reader = new FileReader();
+                            reader.onload = function (event) {
+                                $modalInstance.close(event.target.result);
+                            };
+                            reader.readAsDataURL($scope.originImageInfo);
+                        }
                     }
 
                 }
