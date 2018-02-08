@@ -31,6 +31,10 @@
 		position: absolute;
 		margin-left: 20px;
 	}
+	.result-img>img{
+		max-width: 500px;
+		max-height: 300px;
+	}
 </style>
 
 <div class="show-img" ng-repeat="item in canvasList track by $id(item)">
@@ -45,7 +49,7 @@
 		<ng-show-canvas image-file-info="item.image" trigger-fun="editImg(item.image)" upload-image-fun="uploadImageFun()"></ng-show-canvas>
 	</div>
 	<!--显示处理后的图片-->
-	<div>
+	<div class="result-img">
 		<img ng-if="item.resultImg" ng-src="{{item.resultImg}}" alt="显示处理后的图片">
 	</div>
 </div>
