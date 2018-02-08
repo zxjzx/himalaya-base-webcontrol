@@ -29,24 +29,40 @@
 	}
 	.show-img button{
 		position: absolute;
-		margin-left: 20px;
+		margin-left: 200px;
 	}
 	.result-img>img{
 		max-width: 500px;
 		max-height: 300px;
 	}
+	.delete-image{
+		width:24px;
+		height: 24px;
+		line-height: 24px;
+		border:0px solid #dd0000;
+		border-radius: 12px;
+		background-color: #dd0000;
+		text-align: center;
+		color:#fff;
+		font-size: 16px;
+		font-weight:bold;
+		cursor:pointer;
+		position: absolute;
+		left:95%;
+	}
 </style>
 
 <div class="show-img" ng-repeat="item in canvasList track by $id(item)">
-	<div class="input-img">
+	<div class="input-img" ng-if="isShowAddButton">
 		<a href="javascript:;"> <input type="file" class="btn btn-warning btn-s" file-change-model/>
 			<span class="btn btn-success">选择图片</span>
 		</a>
 	</div>
 	<button class="btn btn-primary" ng-if="item.showImage" ng-click="addCanvas($index)">添加</button>
+	<div class="delete-image" ng-if="!isShowAddButton" ng-click="deleteImage(item,$index)">X</div>
 	<!--未处理的照片-->
 	<div ng-if="!item.resultImg">
-		<ng-show-canvas image-file-info="item.image" trigger-fun="editImg(item.image)" upload-image-fun="uploadImageFun()"></ng-show-canvas>
+		<ng-show-canvas image-file-info="item.image" trigger-fun="editImg(item.image)" upload-image-fun="uploadImageFun()" is-show-add-button="isShowAddButton"></ng-show-canvas>
 	</div>
 	<!--显示处理后的图片-->
 	<div class="result-img">

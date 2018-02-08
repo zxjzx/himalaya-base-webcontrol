@@ -35,6 +35,8 @@ identify-image:标识哪一张图片,便于同一个页面多次调用该指令�
                 templateUrl:'../baseStatic/upload/html/returnImageForView.html',
                 controller:function($scope,getUserInfo,$http,$modal){
 
+                    $scope.isShowAddButton = true;
+
                     var identifyImage = $scope.identifyImage;
 
                     $scope.limitImgSize = $scope.limitImgSize?$scope.limitImgSize:[400,300];//设置图片默认尺寸
@@ -74,6 +76,25 @@ identify-image:标识哪一张图片,便于同一个页面多次调用该指令�
                         if($scope.uploadDuringPreview != "false"){
                             $scope.isCanUploadOprate = false;
                             $scope.uploadAllImageFun();//是否立即执行上传操作
+                        }
+                    };
+
+                    // 删除操作
+                    $scope.deleteImage = function (item,index) {
+                        console.log(item);
+                        console.log(index);
+                        console.log($scope.responseImgIdList[identifyImage]);
+                        if($scope.responseImgIdList[identifyImage]){//如果已经上传到后台，则可点击删除
+                            var picId = $scope.responseImgIdList[identifyImage].id;
+                            $http.post('basewebcontrol/upload/common/deletePic/'+picId).success(function (response) {
+                                if(response.result === "success"){
+                                    console.log("删除成功！");
+                                    $scope.isShowAddButton = true;
+                                    $scope.responseImgIdList[identifyImage] = "";
+                                    $scope.canvasList[index].image = "";
+                                    $scope.canvasList[index].resultImg = "";
+                                }
+                            })
                         }
                     };
 
@@ -127,6 +148,7 @@ identify-image:标识哪一张图片,便于同一个页面多次调用该指令�
                             }
                         }).result.then(function (resultImg) {
                             if(resultImg){
+                                $scope.isShowAddButton = false;
                                 fileBlob = dataURLtoBlob(resultImg);
                                 if(fileBlob){
                                     $scope.canvasList[index].image = fileBlob;
@@ -197,7 +219,8 @@ identify-image:标识哪一张图片,便于同一个页面多次调用该指令�
                 scope:{
                     triggerFun:'&',//不满足格式要求的图片触发函数
                     uploadImageFun:'&',//上传到后台触发函数
-                    imageFileInfo:'='//源图片
+                    imageFileInfo:'=',//源图片
+                    isShowAddButton:'='
                 },
                 template: '<canvas/>',
                 link: function(scope, element) {
@@ -248,6 +271,7 @@ identify-image:标识哪一张图片,便于同一个页面多次调用该指令�
                         canvas[0].getContext('2d').clearRect(this, 0, 0, width, height);
                         canvas[0].getContext('2d').drawImage(this, 0, 0, width, height);
                         scope.uploadImageFun();
+                        scope.isShowAddButton = false;
                     }
 
                     function dataURLtoBlob(dataurl) {
