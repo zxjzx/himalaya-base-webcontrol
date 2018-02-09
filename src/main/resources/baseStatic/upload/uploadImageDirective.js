@@ -5,15 +5,16 @@
  3、在页面按照如下使用指令
 
 指令解释：
- <upload-muti-image limit-amount-img="1" bussiness-id="id" limit-img-size="[500,400]" identify-image="image2"
- response-img-id-list="responseImgIdList" response-fun="responseFun()"></upload-muti-image>
+ <upload-muti-image limit-img-size="[500,500]" identify-image="pcAdvertiseSmallImg" exist-image-url="vo.pcAdvertiseSmallImgUrl"
+ response-img-id-list="responseImgIdList" ></upload-muti-image>
 
-limit-amount-img：表示限制同时上传数量为2
-bussiness-id：业务id，可不传
+limit-img-amount：表示限制同时上传数量为
+bussiness-id：业务id，可不传,用于有的页面上传图片需要使用
 limit-img-size：图片尺寸
 responseImgIdList：图片上传成功到后台后返回的图片id等相关信息
 upload-during-preview：不传值则默认为true,表示是否在预览时，图片处理完成后立即上传,true:立即上传，false表示必须点击上传操作才能上传
 identify-image:标识哪一张图片,便于同一个页面多次调用该指令时，用于区分图片id分别所属对象
+exist-image-url:编辑页面时，用于已存在的展示图片
 */
 (function() {
     'use strict';
@@ -22,12 +23,12 @@ identify-image:标识哪一张图片,便于同一个页面多次调用该指令�
             return {
                 restrict:'AE',
                 scope:{
-                    limitAmountImg:'@',//上传图片数量的限制
+                    limitImgAmount:'@',//上传图片数量的限制
                     bussinessId:'=',//上传图片所属业务id
                     limitImgSize:'=',//图片尺寸限制
-                    responseImgIdList:'=',
-                    responseFun:'&',
-                    identifyImage:'@',
+                    responseImgIdList:'=',//图片上传成功到后台后返回的图片id等相关信息
+                    responseFun:'&',//上传成功后触发的函数
+                    identifyImage:'@',//标识
                     uploadDuringPreview:'@',//是否在预览时，图片处理完成后立即上传,true:立即上传，false表示必须点击上传操作才能上传
                     existImageUrl:'=',//已经存在的单个图片url
                     existImageUrlList:'='//已经存在的图片url,List
@@ -36,6 +37,7 @@ identify-image:标识哪一张图片,便于同一个页面多次调用该指令�
                 controller:function($scope,getUserInfo,$http,$modal){
 
                     var identifyImage = $scope.identifyImage;
+                    $scope.limitImgAmount = $scope.limitImgAmount?$scope.limitImgAmount:1;
 
                     $scope.limitImgSize = $scope.limitImgSize?$scope.limitImgSize:[400,300];//设置图片默认尺寸
                     $scope.uploadDuringPreview = $scope.uploadDuringPreview?$scope.uploadDuringPreview:true;//默认立即上传
@@ -61,7 +63,7 @@ identify-image:标识哪一张图片,便于同一个页面多次调用该指令�
                         $scope.canvasList[index] = {image:file};
                         var len = $scope.canvasList.length;
 
-                        if($scope.limitAmountImg != len){//限制上传图片数量
+                        if($scope.limitImgAmount != len){//限制上传图片数量
                             //使最后一个显示添加图片
                             $scope.canvasList[len-1].showImage = true;
                         }
