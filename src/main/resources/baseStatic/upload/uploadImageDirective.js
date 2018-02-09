@@ -35,7 +35,6 @@ identify-image:标识哪一张图片,便于同一个页面多次调用该指令�
                 templateUrl:'../baseStatic/upload/html/returnImageForView.html',
                 controller:function($scope,getUserInfo,$http,$modal){
 
-
                     var identifyImage = $scope.identifyImage;
 
                     $scope.limitImgSize = $scope.limitImgSize?$scope.limitImgSize:[400,300];//设置图片默认尺寸
@@ -87,7 +86,7 @@ identify-image:标识哪一张图片,便于同一个页面多次调用该指令�
                             $http.post('basewebcontrol/upload/common/deletePic/'+picId).success(function (response) {
                                 if(response.result === "success"){
                                     $scope.responseImgIdList[identifyImage] = "";
-                                    $scope.canvasList[index].resultImg = "";
+                                    $scope.canvasList[index].resultImg = $scope.existImageUrl;
                                     $scope.canvasList[index].image = "";
                                 }
                             })
