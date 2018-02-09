@@ -62,7 +62,7 @@
 	<div class="delete-image" ng-if="item.showSelectButton" ng-click="deleteImage(item,$index)">X</div>
 	<!--未处理的照片-->
 	<div ng-if="!item.resultImg">
-		<ng-show-canvas image-file-info="item.image" trigger-fun="editImg(item.image)" upload-image-fun="uploadImageFun($index)" is-show-add-button="isShowAddButton"></ng-show-canvas>
+		<ng-show-canvas image-file-info="item.image" trigger-fun="editImg(item.image)" upload-image-fun="uploadImageFun($index)" is-show-add-button="isShowAddButton" limit-img-size="limitImgSize"></ng-show-canvas>
 	</div>
 	<!--显示处理后的图片-->
 	<div class="result-img">

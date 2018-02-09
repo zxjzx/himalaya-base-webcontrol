@@ -215,20 +215,21 @@ exist-image-url:编辑页面时，用于已存在的展示图片
                 scope:{
                     triggerFun:'&',//不满足格式要求的图片触发函数
                     uploadImageFun:'&',//上传到后台触发函数
-                    imageFileInfo:'='//源图片
+                    imageFileInfo:'=',//源图片
+                    limitImgSize:'='
                 },
                 template: '<canvas/>',
                 link: function(scope, element) {
                     //图片要求尺寸
-                    var imgWidth = 400;
-                    var imgHeight = 300;
+                    var imgWidth = scope.limitImgSize[0];
+                    var imgHeight = scope.limitImgSize[1];
 
                     var params = scope.imageFileInfo;
 
                     if(!params){
                         return;
                     }
-                    params.width = 400;
+                    params.width = imgWidth;
 
                     var canvas = element.find('canvas');
 
