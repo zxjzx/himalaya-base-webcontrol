@@ -53,16 +53,16 @@
 </style>
 
 <div class="show-img" ng-repeat="item in canvasList track by $id(item)">
-	<div class="input-img" ng-if="isShowAddButton">
+	<div class="input-img" ng-if="!item.showSelectButton">
 		<a href="javascript:;"> <input type="file" class="btn btn-warning btn-s" file-change-model/>
 			<span class="btn btn-success">选择图片</span>
 		</a>
 	</div>
 	<button class="btn btn-primary" ng-if="item.showImage" ng-click="addCanvas($index)">添加</button>
-	<div class="delete-image" ng-if="!isShowAddButton" ng-click="deleteImage(item,$index)">X</div>
+	<div class="delete-image" ng-if="item.showSelectButton" ng-click="deleteImage(item,$index)">X</div>
 	<!--未处理的照片-->
 	<div ng-if="!item.resultImg">
-		<ng-show-canvas image-file-info="item.image" trigger-fun="editImg(item.image)" upload-image-fun="uploadImageFun()" is-show-add-button="isShowAddButton"></ng-show-canvas>
+		<ng-show-canvas image-file-info="item.image" trigger-fun="editImg(item.image)" upload-image-fun="uploadImageFun($index)" is-show-add-button="isShowAddButton"></ng-show-canvas>
 	</div>
 	<!--显示处理后的图片-->
 	<div class="result-img">
