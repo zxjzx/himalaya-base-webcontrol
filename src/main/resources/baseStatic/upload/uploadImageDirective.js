@@ -101,9 +101,8 @@ exist-image-url:编辑页面时，用于已存在的展示图片
                         var image = new FormData();
                         //dataList需要上传到后台的数据
                         $scope.canvasList.forEach(function (item) {
-                            image.append('files',item.image);
+                            image.append('files',item.image,'.png');
                         });
-                        // image.append('files',fileBlob,'image.png')
                         $http({
                             method:"post",    　　// 可以是get,post,put, delete,head,jsonp;常使用的是get,post
                             url:'basewebcontrol/upload/common/uploadFiles/'+bussinessId+'/0/'+userId, 　　  //请求路径
@@ -242,7 +241,6 @@ exist-image-url:编辑页面时，用于已存在的展示图片
                         img.src = event.target.result;
                     }
                     function onLoadImage() {
-                        var blob = dataURLtoBlob(this.src);
                         //this.width,this.height 图片的原始尺寸-宽度和高度
                         if((imgWidth && (imgWidth != this.width)) || (imgHeight && imgHeight != this.height)) {
                             //console.log("您上传的图片size为"+parseInt(blob.size/1024)+"k;尺寸为"+this.width+"X"+this.height+";此处图片格式要求为"+imgWidth+'X'+imgHeight);
@@ -268,15 +266,6 @@ exist-image-url:编辑页面时，用于已存在的展示图片
                         canvas[0].getContext('2d').drawImage(this, 0, 0, width, height);
                         scope.uploadImageFun();
 
-                    }
-
-                    function dataURLtoBlob(dataurl) {
-                        var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-                            bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-                        while(n--){
-                            u8arr[n] = bstr.charCodeAt(n);
-                        }
-                        return new Blob([u8arr], {type:mime});
                     }
                 }
 
