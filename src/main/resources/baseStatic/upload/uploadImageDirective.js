@@ -34,7 +34,7 @@ exist-image-url:编辑页面时，用于已存在的展示图片
                     existImageUrlList:'='//已经存在的图片url,List
                 },
                 templateUrl:'../baseStatic/upload/html/returnImageForView.html',
-                controller:function($scope,getUserInfo,$http,$modal){
+                controller:function($scope,getUserInfo,$http,$modal,ejpAlert){
 
                     var identifyImage = $scope.identifyImage;
                     $scope.limitImgAmount = $scope.limitImgAmount?$scope.limitImgAmount:1;
@@ -88,8 +88,8 @@ exist-image-url:编辑页面时，用于已存在的展示图片
                             $http.post('basewebcontrol/upload/common/deletePic/'+picId).success(function (response) {
                                 if(response.result === "success"){
                                     $scope.responseImgIdList[identifyImage] = "";
-                                    $scope.canvasList[index].resultImg = $scope.existImageUrl;
-                                    $scope.canvasList[index].image = "";
+                                    // $scope.canvasList[index].resultImg = $scope.existImageUrl;
+                                    delete $scope.canvasList[index];
                                 }
                             })
                         }
@@ -145,6 +145,11 @@ exist-image-url:编辑页面时，用于已存在的展示图片
                         }).result.then(function (resultImg) {
                             if(resultImg){
                                 fileBlob = dataURLtoBlob(resultImg);
+                                var imageSize = (fileBlob.size/1024).toFixed(2);
+                                if(imageSize>1024*3){
+                                    ejpAlert.show("请注意，上传的图片不能超过3M，请编辑后再上传");
+                                    return;
+                                }
                                 if(fileBlob){
                                     $scope.canvasList[index].image = fileBlob;
                                     $scope.canvasList[index].resultImg = resultImg;
@@ -241,13 +246,12 @@ exist-image-url:编辑页面时，用于已存在的展示图片
                         img.src = event.target.result;
                     }
                     function onLoadImage() {
+
                         //this.width,this.height 图片的原始尺寸-宽度和高度
                         if((imgWidth && (imgWidth != this.width)) || (imgHeight && imgHeight != this.height)) {
-                            //console.log("您上传的图片size为"+parseInt(blob.size/1024)+"k;尺寸为"+this.width+"X"+this.height+";此处图片格式要求为"+imgWidth+'X'+imgHeight);
                             scope.triggerFun();
                             return;
                         }
-
                         var width = params.width || this.width / this.height * params.height;
                         var height = params.height || this.height / this.width * params.width;
 
@@ -265,7 +269,6 @@ exist-image-url:编辑页面时，用于已存在的展示图片
                         canvas[0].getContext('2d').clearRect(this, 0, 0, width, height);
                         canvas[0].getContext('2d').drawImage(this, 0, 0, width, height);
                         scope.uploadImageFun();
-
                     }
                 }
 
