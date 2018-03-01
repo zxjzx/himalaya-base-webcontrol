@@ -145,11 +145,6 @@ exist-image-url:编辑页面时，用于已存在的展示图片
                         }).result.then(function (resultImg) {
                             if(resultImg){
                                 fileBlob = dataURLtoBlob(resultImg);
-                                var imageSize = (fileBlob.size/1024).toFixed(2);
-                                if(imageSize>1024*3){
-                                    ejpAlert.show("请注意，上传的图片不能超过3M，请编辑后再上传");
-                                    return;
-                                }
                                 if(fileBlob){
                                     $scope.canvasList[index].image = fileBlob;
                                     $scope.canvasList[index].resultImg = resultImg;
@@ -171,10 +166,28 @@ exist-image-url:编辑页面时，用于已存在的展示图片
                     }
 
                     //editImageModal.html的controller
-                    function editImageModalController(requestResults,$scope,$modalInstance) {
+                    function editImageModalController(requestResults,$scope,$modalInstance,ejpAlert) {
                         $scope.originImageInfo = requestResults.item;
                         $scope.limitImgSize = requestResults.limitImgSize;
+
+                        //获取base64编码格式图片的大小
+                        function getImageSize(base64Img) {
+                            var str=base64Img.substring(22);
+                            var equalIndex= str.indexOf('=');
+                            if(str.indexOf('=')>0){
+                                str=str.substring(0, equalIndex);
+                            }
+                            var strLength=str.length;
+                            var fileLength=parseInt(strLength-(strLength/8)*2);
+                            return fileLength;
+                        }
+
                         $scope.handleImg = function() {
+                            var imageSize = (getImageSize($scope.resultImg)/1024).toFixed(2);
+                            if(imageSize>1024*3){
+                                ejpAlert.show("请注意，上传的图片不能超过3M，请编辑后再上传");
+                                return;
+                            }
                             //返回经过处理的图片
                             $modalInstance.close($scope.resultImg);
                         };
@@ -188,6 +201,11 @@ exist-image-url:编辑页面时，用于已存在的展示图片
                             // 上传原图
                             var reader = new FileReader();
                             reader.onload = function (event) {
+                                var imageSize = (getImageSize(event.target.result)/1024).toFixed(2);
+                                if(imageSize>1024*3){
+                                    ejpAlert.show("请注意，上传的图片不能超过3M，请编辑后再上传");
+                                    return;
+                                }
                                 $modalInstance.close(event.target.result);
                             };
                             reader.readAsDataURL($scope.originImageInfo);
